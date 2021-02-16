@@ -200,7 +200,8 @@ public class DynFields {
     private UnboundField<?> field = null;
     private final Set<String> candidates = Sets.newHashSet();
     private boolean defaultAlwaysNull = false;
-private Builder() {}
+
+    private Builder() {}
 
     /**
      * Set the {@link ClassLoader} used to lookup classes by name.

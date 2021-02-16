@@ -22,7 +22,6 @@ package org.apache.iceberg;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -104,7 +103,7 @@ public class FindFiles {
       // case, there is no valid snapshot to read.
       Preconditions.checkArgument(lastSnapshotId != null,
           "Cannot find a snapshot older than %s",
-          DATE_FORMAT.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(timestampMillis), ZoneOffset.UTC)));
+          DATE_FORMAT.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(timestampMillis), ZoneId.systemDefault())));
       return inSnapshot(lastSnapshotId);
     }
 
