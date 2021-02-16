@@ -44,7 +44,7 @@ public class TypeUtil {
     Preconditions.checkNotNull(schema, "Schema cannot be null");
 
     Types.StructType result = select(schema.asStruct(), fieldIds);
-    if (schema.asStruct() == result) {
+    if (schema.asStruct().equals(result)) {
       return schema;
     } else if (result != null) {
       if (schema.getAliases() != null) {
