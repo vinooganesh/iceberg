@@ -57,7 +57,7 @@ import static org.apache.iceberg.TableProperties.MANIFEST_LISTS_ENABLED_DEFAULT;
 
 @SuppressWarnings("UnnecessaryAnonymousClass")
 abstract class SnapshotProducer<ThisT> implements SnapshotUpdate<ThisT> {
-  private static final Logger LOG = LoggerFactory.getLogger(SnapshotProducer.class);
+  private static final Logger log = LoggerFactory.getLogger(SnapshotProducer.class);
   static final Set<ManifestFile> EMPTY_SET = Sets.newHashSet();
 
   /**
@@ -297,7 +297,7 @@ abstract class SnapshotProducer<ThisT> implements SnapshotUpdate<ThisT> {
       Exceptions.suppressAndThrow(e, this::cleanAll);
     }
 
-    LOG.info("Committed snapshot {} ({})", newSnapshotId.get(), getClass().getSimpleName());
+    log.info("Committed snapshot {} ({})", newSnapshotId.get(), getClass().getSimpleName());
 
     try {
       // at this point, the commit must have succeeded. after a refresh, the snapshot is loaded by
@@ -314,11 +314,11 @@ abstract class SnapshotProducer<ThisT> implements SnapshotUpdate<ThisT> {
       } else {
         // saved may not be present if the latest metadata couldn't be loaded due to eventual
         // consistency problems in refresh. in that case, don't clean up.
-        LOG.warn("Failed to load committed snapshot, skipping manifest clean-up");
+        log.warn("Failed to load committed snapshot, skipping manifest clean-up");
       }
 
     } catch (RuntimeException e) {
-      LOG.warn("Failed to load committed table metadata, skipping manifest clean-up", e);
+      log.warn("Failed to load committed table metadata, skipping manifest clean-up", e);
     }
 
     notifyListeners();
@@ -331,7 +331,7 @@ abstract class SnapshotProducer<ThisT> implements SnapshotUpdate<ThisT> {
         Listeners.notifyAll(event);
       }
     } catch (RuntimeException e) {
-      LOG.warn("Failed to notify listeners", e);
+      log.warn("Failed to notify listeners", e);
     }
   }
 

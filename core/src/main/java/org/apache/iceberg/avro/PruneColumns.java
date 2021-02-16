@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class PruneColumns extends AvroSchemaVisitor<Schema> {
-  private static final Logger LOG = LoggerFactory.getLogger(PruneColumns.class);
+  private static final Logger log = LoggerFactory.getLogger(PruneColumns.class);
 
   private final Set<Integer> selectedIds;
   private final NameMapping nameMapping;
@@ -136,7 +136,7 @@ class PruneColumns extends AvroSchemaVisitor<Schema> {
       Integer valueId = AvroSchemaUtil.getFieldId(keyValue.getField("value"), nameMapping, fieldNames());
       if (keyId == null || valueId == null) {
         if (keyId != null || valueId != null) {
-          LOG.warn("Map schema {} should have both key and value ids set or both unset", array);
+          log.warn("Map schema {} should have both key and value ids set or both unset", array);
         }
         return null;
       }
@@ -188,7 +188,7 @@ class PruneColumns extends AvroSchemaVisitor<Schema> {
     Integer valueId = AvroSchemaUtil.getValueId(map, nameMapping, fieldNames());
     if (keyId == null || valueId == null) {
       if (keyId != null || valueId != null) {
-        LOG.warn("Map schema {} should have both key and value ids set or both unset", map);
+        log.warn("Map schema {} should have both key and value ids set or both unset", map);
       }
       return null;
     }

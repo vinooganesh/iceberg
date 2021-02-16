@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public class NessieCatalog extends BaseMetastoreCatalog implements AutoCloseable, SupportsNamespaces, Configurable {
-  private static final Logger logger = LoggerFactory.getLogger(NessieCatalog.class);
+  private static final Logger log = LoggerFactory.getLogger(NessieCatalog.class);
   private static final Joiner SLASH = Joiner.on("/");
   private NessieClient client;
   private String warehouseLocation;
@@ -152,11 +152,11 @@ public class NessieCatalog extends BaseMetastoreCatalog implements AutoCloseable
            .run(this::dropTableInner, BaseNessieClientServerException.class);
       threw = false;
     } catch (NessieConflictException e) {
-      logger.error("Cannot drop table: failed after retry (update ref and retry)", e);
+      log.error("Cannot drop table: failed after retry (update ref and retry)", e);
     } catch (NessieNotFoundException e) {
-      logger.error("Cannot drop table: ref is no longer valid.", e);
+      log.error("Cannot drop table: ref is no longer valid.", e);
     } catch (BaseNessieClientServerException e) {
-      logger.error("Cannot drop table: unknown error", e);
+      log.error("Cannot drop table: unknown error", e);
     }
     return !threw;
   }

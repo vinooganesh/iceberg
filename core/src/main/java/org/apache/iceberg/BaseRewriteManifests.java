@@ -195,7 +195,7 @@ public class BaseRewriteManifests extends SnapshotProducer<RewriteManifests> imp
       return false;
     }
 
-    if (rewrittenManifests.size() == 0) {
+    if (rewrittenManifests.isEmpty()) {
       // nothing yet processed so perform a full rewrite
       return true;
     }

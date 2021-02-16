@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 public class StreamingWriter extends Writer implements StreamWriter {
 
-  private static final Logger LOG = LoggerFactory.getLogger(StreamingWriter.class);
+  private static final Logger log = LoggerFactory.getLogger(StreamingWriter.class);
   private static final String QUERY_ID_PROPERTY = "spark.sql.streaming.queryId";
   private static final String EPOCH_ID_PROPERTY = "spark.sql.streaming.epochId";
 
@@ -58,12 +58,12 @@ public class StreamingWriter extends Writer implements StreamWriter {
 
   @Override
   public void commit(long epochId, WriterCommitMessage[] messages) {
-    LOG.info("Committing epoch {} for query {} in {} mode", epochId, queryId, mode);
+    log.info("Committing epoch {} for query {} in {} mode", epochId, queryId, mode);
 
     table().refresh();
     Long lastCommittedEpochId = getLastCommittedEpochId();
     if (lastCommittedEpochId != null && epochId <= lastCommittedEpochId) {
-      LOG.info("Skipping epoch {} for query {} as it was already committed", epochId, queryId);
+      log.info("Skipping epoch {} for query {} as it was already committed", epochId, queryId);
       return;
     }
 

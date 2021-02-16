@@ -44,7 +44,7 @@ class HadoopStreams {
   private HadoopStreams() {
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(HadoopStreams.class);
+  private static final Logger log = LoggerFactory.getLogger(HadoopStreams.class);
 
   /**
    * Wraps a {@link FSDataInputStream} in a {@link SeekableInputStream} implementation for readers.
@@ -125,7 +125,7 @@ class HadoopStreams {
         close(); // releasing resources is more important than printing the warning
         String trace = Joiner.on("\n\t").join(
             Arrays.copyOfRange(createStack, 1, createStack.length));
-        LOG.warn("Unclosed input stream created by:\n\t{}", trace);
+        log.warn("Unclosed input stream created by:\n\t{}", trace);
       }
     }
   }
@@ -188,7 +188,7 @@ class HadoopStreams {
         close(); // releasing resources is more important than printing the warning
         String trace = Joiner.on("\n\t").join(
             Arrays.copyOfRange(createStack, 1, createStack.length));
-        LOG.warn("Unclosed output stream created by:\n\t{}", trace);
+        log.warn("Unclosed output stream created by:\n\t{}", trace);
       }
     }
   }

@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * </ol>
  */
 public final class Catalogs {
-  private static final Logger LOG = LoggerFactory.getLogger(Catalogs.class);
+  private static final Logger log = LoggerFactory.getLogger(Catalogs.class);
 
   private static final String HADOOP = "hadoop";
   private static final String HIVE = "hive";
@@ -196,7 +196,7 @@ public final class Catalogs {
               .build()
               .newInstance();
       Catalog catalog = loader.load(conf);
-      LOG.info("Loaded catalog {} using {}", catalog, catalogLoaderClass);
+      log.info("Loaded catalog {} using {}", catalog, catalogLoaderClass);
       return Optional.of(catalog);
     }
 
@@ -209,18 +209,18 @@ public final class Catalogs {
           String warehouseLocation = conf.get(InputFormatConfig.HADOOP_CATALOG_WAREHOUSE_LOCATION);
 
           catalog = (warehouseLocation != null) ? new HadoopCatalog(conf, warehouseLocation) : new HadoopCatalog(conf);
-          LOG.info("Loaded Hadoop catalog {}", catalog);
+          log.info("Loaded Hadoop catalog {}", catalog);
           return Optional.of(catalog);
         case HIVE:
           catalog = HiveCatalogs.loadCatalog(conf);
-          LOG.info("Loaded Hive Metastore catalog {}", catalog);
+          log.info("Loaded Hive Metastore catalog {}", catalog);
           return Optional.of(catalog);
         default:
           throw new NoSuchNamespaceException("Catalog %s is not supported.", catalogName);
       }
     }
 
-    LOG.info("Catalog is not configured");
+    log.info("Catalog is not configured");
     return Optional.empty();
   }
 }

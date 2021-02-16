@@ -32,7 +32,7 @@ import static org.apache.iceberg.TableProperties.DEFAULT_WRITE_METRICS_MODE_DEFA
 
 public class MetricsConfig implements Serializable {
 
-  private static final Logger LOG = LoggerFactory.getLogger(MetricsConfig.class);
+  private static final Logger log = LoggerFactory.getLogger(MetricsConfig.class);
 
   private Map<String, MetricsMode> columnModes = Maps.newHashMap();
   private MetricsMode defaultMode;
@@ -53,7 +53,7 @@ public class MetricsConfig implements Serializable {
       spec.defaultMode = MetricsModes.fromString(defaultModeAsString);
     } catch (IllegalArgumentException err) {
       // Mode was invalid, log the error and use the default
-      LOG.warn("Ignoring invalid default metrics mode: {}", defaultModeAsString, err);
+      log.warn("Ignoring invalid default metrics mode: {}", defaultModeAsString, err);
       spec.defaultMode = MetricsModes.fromString(DEFAULT_WRITE_METRICS_MODE_DEFAULT);
     }
 
@@ -66,7 +66,7 @@ public class MetricsConfig implements Serializable {
             mode = MetricsModes.fromString(props.get(key));
           } catch (IllegalArgumentException err) {
             // Mode was invalid, log the error and use the default
-            LOG.warn("Ignoring invalid metrics mode for column {}: {}", columnAlias, props.get(key), err);
+            log.warn("Ignoring invalid metrics mode for column {}: {}", columnAlias, props.get(key), err);
             mode = spec.defaultMode;
           }
           spec.columnModes.put(columnAlias, mode);

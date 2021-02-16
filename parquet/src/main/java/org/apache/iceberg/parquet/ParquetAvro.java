@@ -121,12 +121,12 @@ class ParquetAvro {
     }
 
     @Override
-    public BigDecimal fromInt(Integer value, org.apache.avro.Schema schema, LogicalType type) {
+    public BigDecimal fromInt(Integer value, Schema schema, LogicalType type) {
       return BigDecimal.valueOf(value, ((ParquetDecimal) type).scale());
     }
 
     @Override
-    public Integer toInt(BigDecimal value, org.apache.avro.Schema schema, LogicalType type) {
+    public Integer toInt(BigDecimal value, Schema schema, LogicalType type) {
       return value.unscaledValue().intValue();
     }
   }
@@ -143,12 +143,12 @@ class ParquetAvro {
     }
 
     @Override
-    public BigDecimal fromLong(Long value, org.apache.avro.Schema schema, LogicalType type) {
+    public BigDecimal fromLong(Long value, Schema schema, LogicalType type) {
       return BigDecimal.valueOf(value, ((ParquetDecimal) type).scale());
     }
 
     @Override
-    public Long toLong(BigDecimal value, org.apache.avro.Schema schema, LogicalType type) {
+    public Long toLong(BigDecimal value, Schema schema, LogicalType type) {
       return value.unscaledValue().longValue();
     }
   }

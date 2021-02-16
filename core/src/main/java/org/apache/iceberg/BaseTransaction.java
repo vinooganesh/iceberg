@@ -48,7 +48,7 @@ import static org.apache.iceberg.TableProperties.COMMIT_TOTAL_RETRY_TIME_MS;
 import static org.apache.iceberg.TableProperties.COMMIT_TOTAL_RETRY_TIME_MS_DEFAULT;
 
 class BaseTransaction implements Transaction {
-  private static final Logger LOG = LoggerFactory.getLogger(BaseTransaction.class);
+  private static final Logger log = LoggerFactory.getLogger(BaseTransaction.class);
 
   enum TransactionType {
     CREATE_TABLE,
@@ -264,7 +264,7 @@ class BaseTransaction implements Transaction {
       // concern, it is safe to delete all of the deleted files from individual operations
       Tasks.foreach(deletedFiles)
           .suppressFailureWhenFinished()
-          .onFailure((file, exc) -> LOG.warn("Failed to delete uncommitted file: {}", file, exc))
+          .onFailure((file, exc) -> log.warn("Failed to delete uncommitted file: {}", file, exc))
           .run(ops.io()::deleteFile);
     }
   }
@@ -319,7 +319,7 @@ class BaseTransaction implements Transaction {
       // a concern, it is safe to delete all of the deleted files from individual operations
       Tasks.foreach(deletedFiles)
           .suppressFailureWhenFinished()
-          .onFailure((file, exc) -> LOG.warn("Failed to delete uncommitted file: {}", file, exc))
+          .onFailure((file, exc) -> log.warn("Failed to delete uncommitted file: {}", file, exc))
           .run(ops.io()::deleteFile);
     }
   }
@@ -373,7 +373,7 @@ class BaseTransaction implements Transaction {
       // delete all files that were cleaned up
       Tasks.foreach(deletedFiles)
           .suppressFailureWhenFinished()
-          .onFailure((file, exc) -> LOG.warn("Failed to delete uncommitted file: {}", file, exc))
+          .onFailure((file, exc) -> log.warn("Failed to delete uncommitted file: {}", file, exc))
           .run(ops.io()::deleteFile);
 
       throw e;
@@ -394,18 +394,18 @@ class BaseTransaction implements Transaction {
         // delete all of the files that were deleted in the most recent set of operation commits
         Tasks.foreach(deletedFiles)
             .suppressFailureWhenFinished()
-            .onFailure((file, exc) -> LOG.warn("Failed to delete uncommitted file: {}", file, exc))
+            .onFailure((file, exc) -> log.warn("Failed to delete uncommitted file: {}", file, exc))
             .run(path -> {
               if (!committedFiles.contains(path)) {
                 ops.io().deleteFile(path);
               }
             });
       } else {
-        LOG.warn("Failed to load metadata for a committed snapshot, skipping clean-up");
+        log.warn("Failed to load metadata for a committed snapshot, skipping clean-up");
       }
 
     } catch (RuntimeException e) {
-      LOG.warn("Failed to load committed metadata, skipping clean-up", e);
+      log.warn("Failed to load committed metadata, skipping clean-up", e);
     }
   }
 

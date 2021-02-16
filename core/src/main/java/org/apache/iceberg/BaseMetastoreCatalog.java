@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseMetastoreCatalog implements Catalog {
-  private static final Logger LOG = LoggerFactory.getLogger(BaseMetastoreCatalog.class);
+  private static final Logger log = LoggerFactory.getLogger(BaseMetastoreCatalog.class);
 
   @Override
   public Table createTable(
@@ -109,7 +109,7 @@ public abstract class BaseMetastoreCatalog implements Catalog {
       throw new NoSuchTableException("Invalid table identifier: %s", identifier);
     }
 
-    LOG.info("Table loaded by catalog: {}", result);
+    log.info("Table loaded by catalog: {}", result);
     return result;
   }
 

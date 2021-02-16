@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * avoid code duplication between this class and Metacat Tables.
  */
 public class HiveTableOperations extends BaseMetastoreTableOperations {
-  private static final Logger LOG = LoggerFactory.getLogger(HiveTableOperations.class);
+  private static final Logger log = LoggerFactory.getLogger(HiveTableOperations.class);
 
   private static final String HIVE_ACQUIRE_LOCK_TIMEOUT_MS = "iceberg.hive.lock-timeout-ms";
   private static final String HIVE_LOCK_CHECK_MIN_WAIT_MS = "iceberg.hive.lock-check-min-wait-ms";
@@ -170,10 +170,10 @@ public class HiveTableOperations extends BaseMetastoreTableOperations {
         }
 
         updateHiveTable = true;
-        LOG.debug("Committing existing table: {}", fullName);
+        log.debug("Committing existing table: {}", fullName);
       } else {
         tbl = newHmsTable();
-        LOG.debug("Committing new table: {}", fullName);
+        log.debug("Committing new table: {}", fullName);
       }
 
       tbl.setSd(storageDescriptor(metadata, hiveEngineEnabled)); // set to pickup any schema changes
@@ -232,7 +232,7 @@ public class HiveTableOperations extends BaseMetastoreTableOperations {
     try {
       return metaClients.run(client -> client.getTable(database, tableName));
     } catch (NoSuchObjectException nte) {
-      LOG.trace("Table not found {}", fullName, nte);
+      log.trace("Table not found {}", fullName, nte);
       return null;
     }
   }
@@ -345,7 +345,7 @@ public class HiveTableOperations extends BaseMetastoreTableOperations {
                 }
               } catch (InterruptedException e) {
                 Thread.interrupted(); // Clear the interrupt status flag
-                LOG.warn("Interrupted while waiting for lock.", e);
+                log.warn("Interrupted while waiting for lock.", e);
               }
             }, TException.class);
       } catch (WaitingForLockException waitingForLockException) {
@@ -374,7 +374,7 @@ public class HiveTableOperations extends BaseMetastoreTableOperations {
         io().deleteFile(metadataLocation);
       }
     } catch (RuntimeException e) {
-      LOG.error("Fail to cleanup metadata file at {}", metadataLocation, e);
+      log.error("Fail to cleanup metadata file at {}", metadataLocation, e);
       throw e;
     } finally {
       unlock(lockId);
@@ -386,7 +386,7 @@ public class HiveTableOperations extends BaseMetastoreTableOperations {
       try {
         doUnlock(lockId.get());
       } catch (Exception e) {
-        LOG.warn("Failed to unlock {}.{}", database, tableName, e);
+        log.warn("Failed to unlock {}.{}", database, tableName, e);
       }
     }
   }

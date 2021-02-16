@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 public class HiveIcebergOutputCommitter extends OutputCommitter {
   private static final String FOR_COMMIT_EXTENSION = ".forCommit";
 
-  private static final Logger LOG = LoggerFactory.getLogger(HiveIcebergOutputCommitter.class);
+  private static final Logger log = LoggerFactory.getLogger(HiveIcebergOutputCommitter.class);
 
   @Override
   public void setupJob(JobContext jobContext) {
@@ -140,7 +140,7 @@ public class HiveIcebergOutputCommitter extends OutputCommitter {
     Table table = Catalogs.loadTable(conf);
 
     long startTime = System.currentTimeMillis();
-    LOG.info("Committing job has started for table: {}, using location: {}", table,
+    log.info("Committing job has started for table: {}, using location: {}", table,
         generateJobLocation(conf, jobContext.getJobID()));
 
     FileIO io = HiveIcebergStorageHandler.io(jobContext.getJobConf());
@@ -151,11 +151,11 @@ public class HiveIcebergOutputCommitter extends OutputCommitter {
       AppendFiles append = table.newAppend();
       dataFiles.forEach(append::appendFile);
       append.commit();
-      LOG.info("Commit took {} ms for table: {} with {} file(s)", System.currentTimeMillis() - startTime, table,
+      log.info("Commit took {} ms for table: {} with {} file(s)", System.currentTimeMillis() - startTime, table,
           dataFiles.size());
-      LOG.debug("Added files {}", dataFiles);
+      log.debug("Added files {}", dataFiles);
     } else {
-      LOG.info("Commit took {} ms for table: {} with no new files", System.currentTimeMillis() - startTime, table);
+      log.info("Commit took {} ms for table: {} with no new files", System.currentTimeMillis() - startTime, table);
     }
 
     cleanup(jobContext);
@@ -173,7 +173,7 @@ public class HiveIcebergOutputCommitter extends OutputCommitter {
     JobContext jobContext = TezUtil.enrichContextWithVertexId(originalContext);
 
     String location = generateJobLocation(jobContext.getJobConf(), jobContext.getJobID());
-    LOG.info("Job {} is aborted. Cleaning job location {}", jobContext.getJobID(), location);
+    log.info("Job {} is aborted. Cleaning job location {}", jobContext.getJobID(), location);
 
     FileIO io = HiveIcebergStorageHandler.io(jobContext.getJobConf());
     List<DataFile> dataFiles = dataFiles(jobContext, io, false);
@@ -183,7 +183,7 @@ public class HiveIcebergOutputCommitter extends OutputCommitter {
       Tasks.foreach(dataFiles)
           .retry(3)
           .suppressFailureWhenFinished()
-          .onFailure((file, exc) -> LOG.debug("Failed on to remove data file {} on abort job", file.path(), exc))
+          .onFailure((file, exc) -> log.debug("Failed on to remove data file {} on abort job", file.path(), exc))
           .run(file -> io.deleteFile(file.path().toString()));
     }
 
@@ -197,14 +197,14 @@ public class HiveIcebergOutputCommitter extends OutputCommitter {
    */
   private void cleanup(JobContext jobContext) throws IOException {
     String location = generateJobLocation(jobContext.getJobConf(), jobContext.getJobID());
-    LOG.info("Cleaning for job: {} on location: {}", jobContext.getJobID(), location);
+    log.info("Cleaning for job: {} on location: {}", jobContext.getJobID(), location);
 
     // Remove the job's temp directory recursively.
     // Intentionally used foreach on a single item. Using the Tasks API here only for the retry capability.
     Tasks.foreach(location)
         .retry(3)
         .suppressFailureWhenFinished()
-        .onFailure((file, exc) -> LOG.debug("Failed on to remove directory {} on cleanup job", file, exc))
+        .onFailure((file, exc) -> log.debug("Failed on to remove directory {} on cleanup job", file, exc))
         .run(file -> {
           Path toDelete = new Path(file);
           FileSystem fs = Util.getFs(toDelete, jobContext.getJobConf());
@@ -291,7 +291,7 @@ public class HiveIcebergOutputCommitter extends OutputCommitter {
     try (ObjectOutputStream oos = new ObjectOutputStream(fileForCommit.createOrOverwrite())) {
       oos.writeObject(closedFiles);
     }
-    LOG.debug("Iceberg committed file is created {}", fileForCommit);
+    log.debug("Iceberg committed file is created {}", fileForCommit);
   }
 
   private static DataFile[] readFileForCommit(String fileForCommitLocation, FileIO io) {

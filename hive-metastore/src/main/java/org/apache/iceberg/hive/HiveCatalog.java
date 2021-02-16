@@ -62,7 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, SupportsNamespaces, Configurable {
-  private static final Logger LOG = LoggerFactory.getLogger(HiveCatalog.class);
+  private static final Logger log = LoggerFactory.getLogger(HiveCatalog.class);
 
   private String name;
   private HiveClientPool clients;
@@ -184,7 +184,7 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
           .map(table -> TableIdentifier.of(namespace, table.getTableName()))
           .collect(Collectors.toList());
 
-      LOG.debug("Listing of namespace: {} resulted in the following tables: {}", namespace, tableIdentifiers);
+      log.debug("Listing of namespace: {} resulted in the following tables: {}", namespace, tableIdentifiers);
       return tableIdentifiers;
 
     } catch (UnknownDBException e) {
@@ -232,11 +232,11 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
         CatalogUtil.dropTableData(ops.io(), lastMetadata);
       }
 
-      LOG.info("Dropped table: {}", identifier);
+      log.info("Dropped table: {}", identifier);
       return true;
 
     } catch (NoSuchTableException | NoSuchObjectException e) {
-      LOG.info("Skipping drop, table does not exist: {}", identifier, e);
+      log.info("Skipping drop, table does not exist: {}", identifier, e);
       return false;
 
     } catch (TException e) {
@@ -273,7 +273,7 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
         return null;
       });
 
-      LOG.info("Renamed table from {}, to {}", from, to);
+      log.info("Renamed table from {}, to {}", from, to);
 
     } catch (NoSuchObjectException e) {
       throw new NoSuchTableException("Table does not exist: %s", from);
@@ -304,7 +304,7 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
         return null;
       });
 
-      LOG.info("Created namespace: {}", namespace);
+      log.info("Created namespace: {}", namespace);
 
     } catch (AlreadyExistsException e) {
       throw new org.apache.iceberg.exceptions.AlreadyExistsException(e, "Namespace '%s' already exists!",
@@ -334,7 +334,7 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
           .map(Namespace::of)
           .collect(Collectors.toList());
 
-      LOG.debug("Listing namespace {} returned tables: {}", namespace, namespaces);
+      log.debug("Listing namespace {} returned tables: {}", namespace, namespaces);
       return namespaces;
 
     } catch (TException e) {
@@ -362,7 +362,7 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
         return null;
       });
 
-      LOG.info("Dropped namespace: {}", namespace);
+      log.info("Dropped namespace: {}", namespace);
       return true;
 
     } catch (InvalidOperationException e) {
@@ -390,7 +390,7 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
     Database database = convertToDatabase(namespace, parameter);
 
     alterHiveDataBase(namespace, database);
-    LOG.debug("Successfully set properties {} for {}", properties.keySet(), namespace);
+    log.debug("Successfully set properties {} for {}", properties.keySet(), namespace);
 
     // Always successful, otherwise exception is thrown
     return true;
@@ -405,7 +405,7 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
     Database database = convertToDatabase(namespace, parameter);
 
     alterHiveDataBase(namespace, database);
-    LOG.debug("Successfully removed properties {} from {}", properties, namespace);
+    log.debug("Successfully removed properties {} from {}", properties, namespace);
 
     // Always successful, otherwise exception is thrown
     return true;
@@ -440,7 +440,7 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
     try {
       Database database = clients.run(client -> client.getDatabase(namespace.level(0)));
       Map<String, String> metadata = convertToMetadata(database);
-      LOG.debug("Loaded metadata for namespace {} found {}", namespace, metadata.keySet());
+      log.debug("Loaded metadata for namespace {} found {}", namespace, metadata.keySet());
       return metadata;
 
     } catch (NoSuchObjectException | UnknownDBException e) {
@@ -583,7 +583,7 @@ public class HiveCatalog extends BaseMetastoreCatalog implements Closeable, Supp
       close(); // releasing resources is more important than printing the warning
       String trace = Joiner.on("\n\t").join(
           Arrays.copyOfRange(createStack, 1, createStack.length));
-      LOG.warn("Unclosed input stream created by:\n\t{}", trace);
+      log.warn("Unclosed input stream created by:\n\t{}", trace);
     }
   }
 

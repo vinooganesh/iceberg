@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 class HiveIcebergRecordWriter extends PartitionedFanoutWriter<Record>
     implements FileSinkOperator.RecordWriter, org.apache.hadoop.mapred.RecordWriter<NullWritable, Container<Record>> {
-  private static final Logger LOG = LoggerFactory.getLogger(HiveIcebergRecordWriter.class);
+  private static final Logger log = LoggerFactory.getLogger(HiveIcebergRecordWriter.class);
 
   // The current key is reused at every write to avoid unnecessary object creation
   private final PartitionKey currentKey;
@@ -96,11 +96,11 @@ class HiveIcebergRecordWriter extends PartitionedFanoutWriter<Record>
       Tasks.foreach(dataFiles)
           .retry(3)
           .suppressFailureWhenFinished()
-          .onFailure((file, exception) -> LOG.debug("Failed on to remove file {} on abort", file, exception))
+          .onFailure((file, exception) -> log.debug("Failed on to remove file {} on abort", file, exception))
           .run(dataFile -> io.deleteFile(dataFile.path().toString()));
     }
 
-    LOG.info("IcebergRecordWriter is closed with abort={}. Created {} files", abort, dataFiles.length);
+    log.info("IcebergRecordWriter is closed with abort={}. Created {} files", abort, dataFiles.length);
   }
 
   @Override

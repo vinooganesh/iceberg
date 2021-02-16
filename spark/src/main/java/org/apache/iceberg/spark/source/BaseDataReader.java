@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> is the Java class returned by this reader whose objects contain one or more rows.
  */
 abstract class BaseDataReader<T> implements Closeable {
-  private static final Logger LOG = LoggerFactory.getLogger(BaseDataReader.class);
+  private static final Logger log = LoggerFactory.getLogger(BaseDataReader.class);
 
   private final Iterator<FileScanTask> tasks;
   private final Map<String, InputFile> inputFiles;
@@ -98,7 +98,7 @@ abstract class BaseDataReader<T> implements Closeable {
       }
     } catch (IOException | RuntimeException e) {
       if (currentTask != null && !currentTask.isDataTask()) {
-        LOG.error("Error reading file: {}", getInputFile(currentTask).location(), e);
+        log.error("Error reading file: {}", getInputFile(currentTask).location(), e);
       }
       throw e;
     }

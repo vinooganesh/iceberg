@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ClientPool<C, E extends Exception> implements Closeable {
-  private static final Logger LOG = LoggerFactory.getLogger(ClientPool.class);
+  private static final Logger log = LoggerFactory.getLogger(ClientPool.class);
 
   private final int poolSize;
   private final Deque<C> clients;
@@ -106,7 +106,7 @@ public abstract class ClientPool<C, E extends Exception> implements Closeable {
 
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      LOG.warn("Interrupted while shutting down pool. Some clients may not be closed.", e);
+      log.warn("Interrupted while shutting down pool. Some clients may not be closed.", e);
     }
   }
 

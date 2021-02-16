@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 public class StreamingReaderOperator extends AbstractStreamOperator<RowData>
     implements OneInputStreamOperator<FlinkInputSplit, RowData> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(StreamingReaderOperator.class);
+  private static final Logger log = LoggerFactory.getLogger(StreamingReaderOperator.class);
 
   // It's the same thread that is running this operator and checkpoint actions. we use this executor to schedule only
   // one split for future reading, so that a new checkpoint could be triggered without blocking long time for exhausting
@@ -99,7 +99,7 @@ public class StreamingReaderOperator extends AbstractStreamOperator<RowData>
     splits = Lists.newLinkedList();
     if (context.isRestored()) {
       int subtaskIdx = getRuntimeContext().getIndexOfThisSubtask();
-      LOG.info("Restoring state for the {} (taskIdx: {}).", getClass().getSimpleName(), subtaskIdx);
+      log.info("Restoring state for the {} (taskIdx: {}).", getClass().getSimpleName(), subtaskIdx);
 
       for (FlinkInputSplit split : inputSplitsState.get()) {
         splits.add(split);

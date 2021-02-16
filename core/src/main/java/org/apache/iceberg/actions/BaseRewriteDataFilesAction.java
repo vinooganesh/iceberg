@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseRewriteDataFilesAction<ThisT>
     extends BaseSnapshotUpdateAction<ThisT, RewriteDataFilesActionResult> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(BaseRewriteDataFilesAction.class);
+  private static final Logger log = LoggerFactory.getLogger(BaseRewriteDataFilesAction.class);
 
   private final Table table;
   private final FileIO fileIO;
@@ -205,7 +205,7 @@ public abstract class BaseRewriteDataFilesAction<ThisT>
           fileScanTasks.close();
         }
       } catch (IOException ioe) {
-        LOG.warn("Failed to close task iterable", ioe);
+        log.warn("Failed to close task iterable", ioe);
       }
     }
 
@@ -253,7 +253,7 @@ public abstract class BaseRewriteDataFilesAction<ThisT>
         tasksGroupedByPartition.put(structLike, task);
       });
     } catch (IOException e) {
-      LOG.warn("Failed to close task iterator", e);
+      log.warn("Failed to close task iterator", e);
     }
     return tasksGroupedByPartition.asMap();
   }
@@ -267,7 +267,7 @@ public abstract class BaseRewriteDataFilesAction<ThisT>
       Tasks.foreach(Iterables.transform(addedDataFiles, f -> f.path().toString()))
           .noRetry()
           .suppressFailureWhenFinished()
-          .onFailure((location, exc) -> LOG.warn("Failed to delete: {}", location, exc))
+          .onFailure((location, exc) -> log.warn("Failed to delete: {}", location, exc))
           .run(fileIO::deleteFile);
       throw e;
     }

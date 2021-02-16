@@ -49,7 +49,7 @@ import static org.apache.iceberg.TableProperties.DEFAULT_NAME_MAPPING;
 
 public class RowDataRewriter {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RowDataRewriter.class);
+  private static final Logger log = LoggerFactory.getLogger(RowDataRewriter.class);
 
   private final Schema schema;
   private final FileFormat format;
@@ -136,13 +136,13 @@ public class RowDataRewriter {
         return Lists.newArrayList(writer.dataFiles());
       } catch (Throwable originalThrowable) {
         try {
-          LOG.error("Aborting commit for  (subTaskId {}, attemptId {})", subTaskId, attemptId);
+          log.error("Aborting commit for  (subTaskId {}, attemptId {})", subTaskId, attemptId);
           writer.abort();
-          LOG.error("Aborted commit for  (subTaskId {}, attemptId {})", subTaskId, attemptId);
+          log.error("Aborted commit for  (subTaskId {}, attemptId {})", subTaskId, attemptId);
         } catch (Throwable inner) {
           if (originalThrowable != inner) {
             originalThrowable.addSuppressed(inner);
-            LOG.warn("Suppressing exception in catch: {}", inner.getMessage(), inner);
+            log.warn("Suppressing exception in catch: {}", inner.getMessage(), inner);
           }
         }
 

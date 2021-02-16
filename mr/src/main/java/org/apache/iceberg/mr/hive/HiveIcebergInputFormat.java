@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class HiveIcebergInputFormat extends MapredIcebergInputFormat<Record>
                                     implements CombineHiveInputFormat.AvoidSplitCombination {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HiveIcebergInputFormat.class);
+  private static final Logger log = LoggerFactory.getLogger(HiveIcebergInputFormat.class);
 
   @Override
   public InputSplit[] getSplits(JobConf job, int numSplits) throws IOException {
@@ -61,7 +61,7 @@ public class HiveIcebergInputFormat extends MapredIcebergInputFormat<Record>
         Expression filter = HiveIcebergFilterFactory.generateFilterExpression(sarg);
         job.set(InputFormatConfig.FILTER_EXPRESSION, SerializationUtil.serializeToBase64(filter));
       } catch (UnsupportedOperationException e) {
-        LOG.warn("Unable to create Iceberg filter, continuing without filter (will be applied by Hive later): ", e);
+        log.warn("Unable to create Iceberg filter, continuing without filter (will be applied by Hive later): ", e);
       }
     }
 

@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class PartitionedWriter<T> extends BaseTaskWriter<T> {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionedWriter.class);
+  private static final Logger log = LoggerFactory.getLogger(PartitionedWriter.class);
 
   private final Set<PartitionKey> completedPartitions = Sets.newHashSet();
 
@@ -65,7 +65,7 @@ public abstract class PartitionedWriter<T> extends BaseTaskWriter<T> {
       if (completedPartitions.contains(key)) {
         // if rows are not correctly grouped, detect and fail the write
         PartitionKey existingKey = Iterables.find(completedPartitions, key::equals, null);
-        LOG.warn("Duplicate key: {} == {}", existingKey, key);
+        log.warn("Duplicate key: {} == {}", existingKey, key);
         throw new IllegalStateException("Already closed files for partition: " + key.toPath());
       }
 

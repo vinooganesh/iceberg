@@ -221,7 +221,7 @@ public final class ORCSchemaUtil {
     List<Types.NestedField> fields = OrcToIcebergVisitor.visitSchema(orcSchema, schemaConverter).stream()
         .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
 
-    if (fields.size() == 0) {
+    if (fields.isEmpty()) {
       throw new IllegalArgumentException("ORC schema does not contain Iceberg IDs");
     }
 

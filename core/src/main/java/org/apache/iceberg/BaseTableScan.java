@@ -22,6 +22,7 @@ package org.apache.iceberg;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * Base class for {@link TableScan} implementations.
  */
 abstract class BaseTableScan implements TableScan {
-  private static final Logger LOG = LoggerFactory.getLogger(BaseTableScan.class);
+  private static final Logger log = LoggerFactory.getLogger(BaseTableScan.class);
 
   private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
@@ -201,7 +202,7 @@ abstract class BaseTableScan implements TableScan {
   public CloseableIterable<FileScanTask> planFiles() {
     Snapshot snapshot = snapshot();
     if (snapshot != null) {
-      LOG.info("Scanning table {} snapshot {} created at {} with filter {}", table,
+      log.info("Scanning table {} snapshot {} created at {} with filter {}", table,
           snapshot.snapshotId(), formatTimestampMillis(snapshot.timestampMillis()),
           context.rowFilter());
 
@@ -212,7 +213,7 @@ abstract class BaseTableScan implements TableScan {
           context.rowFilter(), context.ignoreResiduals(), context.caseSensitive(), context.returnColumnStats());
 
     } else {
-      LOG.info("Scanning empty table {}", table);
+      log.info("Scanning empty table {}", table);
       return CloseableIterable.empty();
     }
   }
@@ -309,6 +310,6 @@ abstract class BaseTableScan implements TableScan {
   }
 
   private static String formatTimestampMillis(long millis) {
-    return DATE_FORMAT.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault()));
+    return DATE_FORMAT.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC));
   }
 }

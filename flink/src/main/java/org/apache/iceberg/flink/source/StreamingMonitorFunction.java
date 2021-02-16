@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class StreamingMonitorFunction extends RichSourceFunction<FlinkInputSplit> implements CheckpointedFunction {
 
-  private static final Logger LOG = LoggerFactory.getLogger(StreamingMonitorFunction.class);
+  private static final Logger log = LoggerFactory.getLogger(StreamingMonitorFunction.class);
 
   private static final long INIT_LAST_SNAPSHOT_ID = -1L;
 
@@ -93,7 +93,7 @@ public class StreamingMonitorFunction extends RichSourceFunction<FlinkInputSplit
 
     // Restore the last-snapshot-id from flink's state if possible.
     if (context.isRestored()) {
-      LOG.info("Restoring state for the {}.", getClass().getSimpleName());
+      log.info("Restoring state for the {}.", getClass().getSimpleName());
       lastSnapshotId = lastSnapshotIdState.get().iterator().next();
     } else if (scanContext.startSnapshotId() != null) {
       Preconditions.checkNotNull(table.currentSnapshot(), "Don't have any available snapshot in table.");

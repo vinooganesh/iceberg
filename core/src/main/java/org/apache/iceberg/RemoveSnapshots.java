@@ -61,7 +61,7 @@ import static org.apache.iceberg.TableProperties.MIN_SNAPSHOTS_TO_KEEP_DEFAULT;
 
 @SuppressWarnings("UnnecessaryAnonymousClass")
 class RemoveSnapshots implements ExpireSnapshots {
-  private static final Logger LOG = LoggerFactory.getLogger(RemoveSnapshots.class);
+  private static final Logger log = LoggerFactory.getLogger(RemoveSnapshots.class);
 
   // Creates an executor service that runs each task in the thread that invokes execute/submit.
   private static final ExecutorService DEFAULT_DELETE_EXECUTOR_SERVICE = MoreExecutors.newDirectExecutorService();
@@ -110,14 +110,14 @@ class RemoveSnapshots implements ExpireSnapshots {
 
   @Override
   public ExpireSnapshots expireSnapshotId(long expireSnapshotId) {
-    LOG.info("Expiring snapshot with id: {}", expireSnapshotId);
+    log.info("Expiring snapshot with id: {}", expireSnapshotId);
     idsToRemove.add(expireSnapshotId);
     return this;
   }
 
   @Override
   public ExpireSnapshots expireOlderThan(long timestampMillis) {
-    LOG.info("Expiring snapshots older than: {} ({})", new Date(timestampMillis), timestampMillis);
+    log.info("Expiring snapshots older than: {} ({})", new Date(timestampMillis), timestampMillis);
     this.expireOlderThan = timestampMillis;
     return this;
   }
@@ -184,12 +184,12 @@ class RemoveSnapshots implements ExpireSnapshots {
           TableMetadata updated = internalApply();
           ops.commit(base, updated);
         });
-    LOG.info("Committed snapshot changes");
+    log.info("Committed snapshot changes");
 
     if (cleanExpiredFiles) {
       cleanExpiredSnapshots();
     } else {
-      LOG.info("Cleaning up manifest and data files disabled, leaving them in place");
+      log.info("Cleaning up manifest and data files disabled, leaving them in place");
     }
   }
 
@@ -212,7 +212,7 @@ class RemoveSnapshots implements ExpireSnapshots {
       long snapshotId = snapshot.snapshotId();
       if (!validIds.contains(snapshotId)) {
         // the snapshot was expired
-        LOG.info("Expired snapshot: {}", snapshot);
+        log.info("Expired snapshot: {}", snapshot);
         expiredIds.add(snapshotId);
       }
     }
@@ -222,7 +222,7 @@ class RemoveSnapshots implements ExpireSnapshots {
       return;
     }
 
-    LOG.info("Committed snapshot changes; cleaning up expired manifests and data files.");
+    log.info("Committed snapshot changes; cleaning up expired manifests and data files.");
 
     removeExpiredFiles(current.snapshots(), validIds, expiredIds);
   }
@@ -251,7 +251,7 @@ class RemoveSnapshots implements ExpireSnapshots {
     Set<ManifestFile> manifestsToScan = Sets.newHashSet();
     Tasks.foreach(snapshots).retry(3).suppressFailureWhenFinished()
         .onFailure((snapshot, exc) ->
-            LOG.warn("Failed on snapshot {} while reading manifest list: {}", snapshot.snapshotId(),
+            log.warn("Failed on snapshot {} while reading manifest list: {}", snapshot.snapshotId(),
                 snapshot.manifestListLocation(), exc))
         .run(
             snapshot -> {
@@ -286,7 +286,7 @@ class RemoveSnapshots implements ExpireSnapshots {
     Set<ManifestFile> manifestsToRevert = Sets.newHashSet();
     Tasks.foreach(base.snapshots()).retry(3).suppressFailureWhenFinished()
         .onFailure((snapshot, exc) ->
-            LOG.warn("Failed on snapshot {} while reading manifest list: {}", snapshot.snapshotId(),
+            log.warn("Failed on snapshot {} while reading manifest list: {}", snapshot.snapshotId(),
                 snapshot.manifestListLocation(), exc))
         .run(
             snapshot -> {
@@ -364,19 +364,19 @@ class RemoveSnapshots implements ExpireSnapshots {
   }
 
   private void deleteMetadataFiles(Set<String> manifestsToDelete, Set<String> manifestListsToDelete) {
-    LOG.warn("Manifests to delete: {}", Joiner.on(", ").join(manifestsToDelete));
-    LOG.warn("Manifests Lists to delete: {}", Joiner.on(", ").join(manifestListsToDelete));
+    log.warn("Manifests to delete: {}", Joiner.on(", ").join(manifestsToDelete));
+    log.warn("Manifests Lists to delete: {}", Joiner.on(", ").join(manifestListsToDelete));
 
     Tasks.foreach(manifestsToDelete)
         .executeWith(deleteExecutorService)
         .retry(3).stopRetryOn(NotFoundException.class).suppressFailureWhenFinished()
-        .onFailure((manifest, exc) -> LOG.warn("Delete failed for manifest: {}", manifest, exc))
+        .onFailure((manifest, exc) -> log.warn("Delete failed for manifest: {}", manifest, exc))
         .run(deleteFunc::accept);
 
     Tasks.foreach(manifestListsToDelete)
         .executeWith(deleteExecutorService)
         .retry(3).stopRetryOn(NotFoundException.class).suppressFailureWhenFinished()
-        .onFailure((list, exc) -> LOG.warn("Delete failed for manifest list: {}", list, exc))
+        .onFailure((list, exc) -> log.warn("Delete failed for manifest list: {}", list, exc))
         .run(deleteFunc::accept);
   }
 
@@ -386,7 +386,7 @@ class RemoveSnapshots implements ExpireSnapshots {
     Tasks.foreach(filesToDelete)
         .executeWith(deleteExecutorService)
         .retry(3).stopRetryOn(NotFoundException.class).suppressFailureWhenFinished()
-        .onFailure((file, exc) -> LOG.warn("Delete failed for data file: {}", file, exc))
+        .onFailure((file, exc) -> log.warn("Delete failed for data file: {}", file, exc))
         .run(file -> deleteFunc.accept(file));
   }
 
@@ -396,7 +396,7 @@ class RemoveSnapshots implements ExpireSnapshots {
     Tasks.foreach(manifestsToScan)
         .retry(3).suppressFailureWhenFinished()
         .executeWith(ThreadPools.getWorkerPool())
-        .onFailure((item, exc) -> LOG.warn("Failed to get deleted files: this may cause orphaned data files", exc))
+        .onFailure((item, exc) -> log.warn("Failed to get deleted files: this may cause orphaned data files", exc))
         .run(manifest -> {
           // the manifest has deletes, scan it to find files to delete
           try (ManifestReader<?> reader = ManifestFiles.open(manifest, ops.io(), ops.current().specsById())) {
@@ -416,7 +416,7 @@ class RemoveSnapshots implements ExpireSnapshots {
     Tasks.foreach(manifestsToRevert)
         .retry(3).suppressFailureWhenFinished()
         .executeWith(ThreadPools.getWorkerPool())
-        .onFailure((item, exc) -> LOG.warn("Failed to get added files: this may cause orphaned data files", exc))
+        .onFailure((item, exc) -> log.warn("Failed to get added files: this may cause orphaned data files", exc))
         .run(manifest -> {
           // the manifest has deletes, scan it to find files to delete
           try (ManifestReader<?> reader = ManifestFiles.open(manifest, ops.io(), ops.current().specsById())) {

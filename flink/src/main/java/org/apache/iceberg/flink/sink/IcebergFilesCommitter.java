@@ -65,7 +65,7 @@ class IcebergFilesCommitter extends AbstractStreamOperator<Void>
   private static final long INITIAL_CHECKPOINT_ID = -1L;
   private static final byte[] EMPTY_MANIFEST_DATA = new byte[0];
 
-  private static final Logger LOG = LoggerFactory.getLogger(IcebergFilesCommitter.class);
+  private static final Logger log = LoggerFactory.getLogger(IcebergFilesCommitter.class);
   private static final String FLINK_JOB_ID = "flink.job-id";
 
   // The max checkpoint id we've committed to iceberg table. As the flink's checkpoint is always increasing, so we could
@@ -153,7 +153,7 @@ class IcebergFilesCommitter extends AbstractStreamOperator<Void>
   public void snapshotState(StateSnapshotContext context) throws Exception {
     super.snapshotState(context);
     long checkpointId = context.getCheckpointId();
-    LOG.info("Start to flush snapshot state to state backend, table: {}, checkpointId: {}", table, checkpointId);
+    log.info("Start to flush snapshot state to state backend, table: {}, checkpointId: {}", table, checkpointId);
 
     // Update the checkpoint state.
     dataFilesPerCheckpoint.put(checkpointId, writeToManifest(checkpointId));
@@ -223,7 +223,7 @@ class IcebergFilesCommitter extends AbstractStreamOperator<Void>
             .add("checkpointId", checkpointId)
             .add("manifestPath", manifest.path())
             .toString();
-        LOG.warn("The iceberg transaction has been committed, but we failed to clean the temporary flink manifests: {}",
+        log.warn("The iceberg transaction has been committed, but we failed to clean the temporary flink manifests: {}",
             details, e);
       }
     }
@@ -289,7 +289,7 @@ class IcebergFilesCommitter extends AbstractStreamOperator<Void>
 
   private void commitOperation(SnapshotUpdate<?> operation, int numDataFiles, int numDeleteFiles, String description,
                                String newFlinkJobId, long checkpointId) {
-    LOG.info("Committing {} with {} data files and {} delete files to table {}", description, numDataFiles,
+    log.info("Committing {} with {} data files and {} delete files to table {}", description, numDataFiles,
         numDeleteFiles, table);
     operation.set(MAX_COMMITTED_CHECKPOINT_ID, Long.toString(checkpointId));
     operation.set(FLINK_JOB_ID, newFlinkJobId);
@@ -297,7 +297,7 @@ class IcebergFilesCommitter extends AbstractStreamOperator<Void>
     long start = System.currentTimeMillis();
     operation.commit(); // abort is automatically called if this fails.
     long duration = System.currentTimeMillis() - start;
-    LOG.info("Committed in {} ms", duration);
+    log.info("Committed in {} ms", duration);
   }
 
   @Override

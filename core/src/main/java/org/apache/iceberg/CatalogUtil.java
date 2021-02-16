@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CatalogUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(CatalogUtil.class);
+  private static final Logger log = LoggerFactory.getLogger(CatalogUtil.class);
   public static final String ICEBERG_CATALOG_TYPE = "type";
   public static final String ICEBERG_CATALOG_TYPE_HADOOP = "hadoop";
   public static final String ICEBERG_CATALOG_TYPE_HIVE = "hive";
@@ -74,7 +74,7 @@ public class CatalogUtil {
       }
     }
 
-    LOG.info("Manifests to delete: {}", Joiner.on(", ").join(manifestsToDelete));
+    log.info("Manifests to delete: {}", Joiner.on(", ").join(manifestsToDelete));
 
     // run all of the deletes
 
@@ -82,17 +82,17 @@ public class CatalogUtil {
 
     Tasks.foreach(Iterables.transform(manifestsToDelete, ManifestFile::path))
         .noRetry().suppressFailureWhenFinished()
-        .onFailure((manifest, exc) -> LOG.warn("Delete failed for manifest: {}", manifest, exc))
+        .onFailure((manifest, exc) -> log.warn("Delete failed for manifest: {}", manifest, exc))
         .run(io::deleteFile);
 
     Tasks.foreach(manifestListsToDelete)
         .noRetry().suppressFailureWhenFinished()
-        .onFailure((list, exc) -> LOG.warn("Delete failed for manifest list: {}", list, exc))
+        .onFailure((list, exc) -> log.warn("Delete failed for manifest list: {}", list, exc))
         .run(io::deleteFile);
 
     Tasks.foreach(metadata.metadataFileLocation())
         .noRetry().suppressFailureWhenFinished()
-        .onFailure((list, exc) -> LOG.warn("Delete failed for metadata file: {}", list, exc))
+        .onFailure((list, exc) -> log.warn("Delete failed for metadata file: {}", list, exc))
         .run(io::deleteFile);
   }
 
@@ -107,7 +107,7 @@ public class CatalogUtil {
     Tasks.foreach(allManifests)
         .noRetry().suppressFailureWhenFinished()
         .executeWith(ThreadPools.getWorkerPool())
-        .onFailure((item, exc) -> LOG.warn("Failed to get deleted files: this may cause orphaned data files", exc))
+        .onFailure((item, exc) -> log.warn("Failed to get deleted files: this may cause orphaned data files", exc))
         .run(manifest -> {
           try (ManifestReader<?> reader = ManifestFiles.open(manifest, io)) {
             for (ManifestEntry<?> entry : reader.entries()) {
@@ -119,7 +119,7 @@ public class CatalogUtil {
                   io.deleteFile(path);
                 } catch (RuntimeException e) {
                   // this may happen if the map of deleted files gets cleaned up by gc
-                  LOG.warn("Delete failed for data file: {}", path, e);
+                  log.warn("Delete failed for data file: {}", path, e);
                 }
               }
             }
@@ -213,7 +213,7 @@ public class CatalogUtil {
       String impl,
       Map<String, String> properties,
       Configuration hadoopConf) {
-    LOG.info("Loading custom FileIO implementation: {}", impl);
+    log.info("Loading custom FileIO implementation: {}", impl);
     DynConstructors.Ctor<FileIO> ctor;
     try {
       ctor = DynConstructors.builder(FileIO.class).impl(impl).buildChecked();

@@ -43,7 +43,7 @@ import scala.collection.JavaConverters;
  * source table.
  */
 public class Spark3SnapshotAction extends Spark3CreateAction implements SnapshotAction {
-  private static final Logger LOG = LoggerFactory.getLogger(Spark3SnapshotAction.class);
+  private static final Logger log = LoggerFactory.getLogger(Spark3SnapshotAction.class);
 
   private String destTableLocation = null;
 
@@ -64,7 +64,7 @@ public class Spark3SnapshotAction extends Spark3CreateAction implements Snapshot
     boolean threw = true;
     try {
       String stagingLocation = getMetadataLocation(icebergTable);
-      LOG.info("Beginning snapshot of {} to {} using metadata location {}", sourceTableIdent(), destTableIdent(),
+      log.info("Beginning snapshot of {} to {} using metadata location {}", sourceTableIdent(), destTableIdent(),
           stagingLocation);
 
       TableIdentifier v1TableIdentifier = v1SourceTable().identifier();
@@ -73,19 +73,19 @@ public class Spark3SnapshotAction extends Spark3CreateAction implements Snapshot
       threw = false;
     } finally {
       if (threw) {
-        LOG.error("Error when attempting to commit snapshot changes, rolling back");
+        log.error("Error when attempting to commit snapshot changes, rolling back");
 
         try {
           stagedTable.abortStagedChanges();
         } catch (Exception abortException) {
-          LOG.error("Cannot abort staged changes", abortException);
+          log.error("Cannot abort staged changes", abortException);
         }
       }
     }
 
     Snapshot snapshot = icebergTable.currentSnapshot();
     long numMigratedFiles = Long.parseLong(snapshot.summary().get(SnapshotSummary.TOTAL_DATA_FILES_PROP));
-    LOG.info("Successfully loaded Iceberg metadata for {} files", numMigratedFiles);
+    log.info("Successfully loaded Iceberg metadata for {} files", numMigratedFiles);
     return numMigratedFiles;
   }
 

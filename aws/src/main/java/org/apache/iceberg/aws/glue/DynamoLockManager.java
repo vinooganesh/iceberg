@@ -63,7 +63,7 @@ import software.amazon.awssdk.services.dynamodb.model.TransactionConflictExcepti
  */
 class DynamoLockManager extends LockManagers.BaseLockManager {
 
-  private static final Logger LOG = LoggerFactory.getLogger(DynamoLockManager.class);
+  private static final Logger log = LoggerFactory.getLogger(DynamoLockManager.class);
 
   private static final String COL_LOCK_ENTITY_ID = "entityId";
   private static final String COL_LEASE_DURATION_MS = "leaseDurationMs";
@@ -124,7 +124,7 @@ class DynamoLockManager extends LockManagers.BaseLockManager {
       return;
     }
 
-    LOG.info("Dynamo lock table {} not found, trying to create", lockTableName);
+    log.info("Dynamo lock table {} not found, trying to create", lockTableName);
     dynamo.createTable(CreateTableRequest.builder()
         .tableName(lockTableName)
         .keySchema(lockTableSchema())
@@ -263,10 +263,10 @@ class DynamoLockManager extends LockManagers.BaseLockManager {
               .build()));
       succeeded = true;
     } catch (ConditionalCheckFailedException e) {
-      LOG.error("Failed to release lock for entity: {}, owner: {}, lock entity does not exist or owner not match",
+      log.error("Failed to release lock for entity: {}, owner: {}, lock entity does not exist or owner not match",
           entityId, ownerId, e);
     } catch (DynamoDbException e) {
-      LOG.error("Failed to release lock {} by for entity: {}, owner: {}, encountered unexpected DynamoDB exception",
+      log.error("Failed to release lock {} by for entity: {}, owner: {}, encountered unexpected DynamoDB exception",
           entityId, ownerId, e);
     } finally {
       if (heartbeat != null && heartbeat.ownerId().equals(ownerId)) {
@@ -349,10 +349,10 @@ class DynamoLockManager extends LockManagers.BaseLockManager {
             .expressionAttributeValues(toLockIdValues(entityId, ownerId))
             .build());
       } catch (ConditionalCheckFailedException e) {
-        LOG.error("Fail to heartbeat for entity: {}, owner: {} due to conditional check failure, " +
+        log.error("Fail to heartbeat for entity: {}, owner: {} due to conditional check failure, " +
                 "unsafe concurrent commits might be going on", entityId, ownerId, e);
       } catch (RuntimeException e) {
-        LOG.error("Failed to heartbeat for entity: {}, owner: {}", entityId, ownerId, e);
+        log.error("Failed to heartbeat for entity: {}, owner: {}", entityId, ownerId, e);
       }
     }
 

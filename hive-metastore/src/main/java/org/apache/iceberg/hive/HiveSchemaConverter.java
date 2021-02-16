@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * Use {@link HiveSchemaUtil} for conversion purposes.
  */
 class HiveSchemaConverter {
-  private static final Logger LOG = LoggerFactory.getLogger(HiveSchemaConverter.class);
+  private static final Logger log = LoggerFactory.getLogger(HiveSchemaConverter.class);
 
   private int id;
   private boolean autoConvert;
@@ -85,7 +85,7 @@ class HiveSchemaConverter {
             Preconditions.checkArgument(autoConvert, "Unsupported Hive type: %s, use integer instead",
                 ((PrimitiveTypeInfo) typeInfo).getPrimitiveCategory());
 
-            LOG.debug("Using auto conversion from SHORT/BYTE to INTEGER");
+            log.debug("Using auto conversion from SHORT/BYTE to INTEGER");
             return Types.IntegerType.get();
           case INT:
             return Types.IntegerType.get();
@@ -98,7 +98,7 @@ class HiveSchemaConverter {
             Preconditions.checkArgument(autoConvert, "Unsupported Hive type: %s, use string instead",
                 ((PrimitiveTypeInfo) typeInfo).getPrimitiveCategory());
 
-            LOG.debug("Using auto conversion from CHAR/VARCHAR to STRING");
+            log.debug("Using auto conversion from CHAR/VARCHAR to STRING");
             return Types.StringType.get();
           case STRING:
             return Types.StringType.get();

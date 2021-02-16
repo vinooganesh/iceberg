@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public abstract class BasePageIterator {
-  private static final Logger LOG = LoggerFactory.getLogger(BasePageIterator.class);
+  private static final Logger log = LoggerFactory.getLogger(BasePageIterator.class);
 
   protected final ColumnDescriptor desc;
   protected final String writerVersion;
@@ -113,13 +113,13 @@ public abstract class BasePageIterator {
     this.repetitionLevels = new ValuesReaderIntIterator(rlReader);
     try {
       BytesInput bytes = initPage.getBytes();
-      LOG.debug("page size {} bytes and {} records", bytes.size(), triplesCount);
-      LOG.debug("reading repetition levels at 0");
+      log.debug("page size {} bytes and {} records", bytes.size(), triplesCount);
+      log.debug("reading repetition levels at 0");
       ByteBufferInputStream in = bytes.toInputStream();
       rlReader.initFromPage(triplesCount, in);
-      LOG.debug("reading definition levels at {}", in.position());
+      log.debug("reading definition levels at {}", in.position());
       initDefinitionLevelsReader(initPage, desc, in, triplesCount);
-      LOG.debug("reading data at {}", in.position());
+      log.debug("reading data at {}", in.position());
       initDataReader(initPage.getValueEncoding(), in, initPage.getValueCount());
     } catch (IOException e) {
       throw new ParquetDecodingException("could not read page " + initPage + " in col " + desc, e);
@@ -131,7 +131,7 @@ public abstract class BasePageIterator {
     this.repetitionLevels = newRLEIterator(desc.getMaxRepetitionLevel(), initPage.getRepetitionLevels());
     try {
       initDefinitionLevelsReader(initPage, desc);
-      LOG.debug("page data size {} bytes and {} records", initPage.getData().size(), triplesCount);
+      log.debug("page data size {} bytes and {} records", initPage.getData().size(), triplesCount);
       initDataReader(initPage.getDataEncoding(), initPage.getData().toInputStream(), triplesCount);
     } catch (IOException e) {
       throw new ParquetDecodingException("could not read page " + initPage + " in col " + desc, e);

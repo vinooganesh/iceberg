@@ -74,7 +74,7 @@ import static org.apache.iceberg.TableProperties.GC_ENABLED_DEFAULT;
  */
 public class RemoveOrphanFilesAction extends BaseSparkAction<List<String>> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RemoveOrphanFilesAction.class);
+  private static final Logger log = LoggerFactory.getLogger(RemoveOrphanFilesAction.class);
   private static final UserDefinedFunction filename = functions.udf((String path) -> {
     int lastIndex = path.lastIndexOf(File.separator);
     if (lastIndex == -1) {
@@ -170,7 +170,7 @@ public class RemoveOrphanFilesAction extends BaseSparkAction<List<String>> {
     Tasks.foreach(orphanFiles)
         .noRetry()
         .suppressFailureWhenFinished()
-        .onFailure((file, exc) -> LOG.warn("Failed to delete file: {}", file, exc))
+        .onFailure((file, exc) -> log.warn("Failed to delete file: {}", file, exc))
         .run(deleteFunc::accept);
 
     return orphanFiles;

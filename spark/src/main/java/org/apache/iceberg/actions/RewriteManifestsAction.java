@@ -79,7 +79,7 @@ import static org.apache.iceberg.MetadataTableType.ENTRIES;
 public class RewriteManifestsAction
     extends BaseSnapshotUpdateAction<RewriteManifestsAction, RewriteManifestsActionResult> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RewriteManifestsAction.class);
+  private static final Logger log = LoggerFactory.getLogger(RewriteManifestsAction.class);
 
   private final SparkSession spark;
   private final JavaSparkContext sparkContext;
@@ -323,7 +323,7 @@ public class RewriteManifestsAction
     Tasks.foreach(locations)
         .noRetry()
         .suppressFailureWhenFinished()
-        .onFailure((location, exc) -> LOG.warn("Failed to delete: {}", location, exc))
+        .onFailure((location, exc) -> log.warn("Failed to delete: {}", location, exc))
         .run(fileIO::deleteFile);
   }
 

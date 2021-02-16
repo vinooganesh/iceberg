@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExceptionUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(ExceptionUtil.class);
+  private static final Logger log = LoggerFactory.getLogger(ExceptionUtil.class);
 
   private ExceptionUtil() {
   }
@@ -97,7 +97,7 @@ public class ExceptionUtil {
         try {
           catchBlock.run(failure);
         } catch (Exception e) {
-          LOG.warn("Suppressing failure in catch block", e);
+          log.warn("Suppressing failure in catch block", e);
           failure.addSuppressed(e);
         }
       }
@@ -113,7 +113,7 @@ public class ExceptionUtil {
         try {
           finallyBlock.run();
         } catch (Exception e) {
-          LOG.warn("Suppressing failure in finally block", e);
+          log.warn("Suppressing failure in finally block", e);
           if (failure != null) {
             failure.addSuppressed(e);
           } else {

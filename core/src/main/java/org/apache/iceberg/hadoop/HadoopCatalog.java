@@ -76,7 +76,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HadoopCatalog extends BaseMetastoreCatalog implements Closeable, SupportsNamespaces, Configurable {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HadoopCatalog.class);
+  private static final Logger log = LoggerFactory.getLogger(HadoopCatalog.class);
 
   private static final String ICEBERG_HADOOP_WAREHOUSE_BASE = "iceberg/warehouse";
   private static final String TABLE_METADATA_FILE_EXTENSION = ".metadata.json";
@@ -188,7 +188,7 @@ public class HadoopCatalog extends BaseMetastoreCatalog implements Closeable, Su
       return false;
     } catch (IOException e) {
       if (shouldSuppressPermissionError(e)) {
-        LOG.warn("Unable to list metadata directory {}: {}", metadataPath, e);
+        log.warn("Unable to list metadata directory {}: {}", metadataPath, e);
         return false;
       } else {
         throw new UncheckedIOException(e);
@@ -203,7 +203,7 @@ public class HadoopCatalog extends BaseMetastoreCatalog implements Closeable, Su
       return false;
     } catch (IOException e) {
       if (shouldSuppressPermissionError(e)) {
-        LOG.warn("Unable to list directory {}: {}", path, e);
+        log.warn("Unable to list directory {}: {}", path, e);
         return false;
       } else {
         throw new UncheckedIOException(e);

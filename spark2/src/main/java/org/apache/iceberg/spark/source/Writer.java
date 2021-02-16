@@ -73,7 +73,7 @@ import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES_DE
 
 // TODO: parameterize DataSourceWriter with subclass of WriterCommitMessage
 class Writer implements DataSourceWriter {
-  private static final Logger LOG = LoggerFactory.getLogger(Writer.class);
+  private static final Logger log = LoggerFactory.getLogger(Writer.class);
 
   private final Table table;
   private final FileFormat format;
@@ -152,7 +152,7 @@ class Writer implements DataSourceWriter {
   }
 
   protected void commitOperation(SnapshotUpdate<?> operation, int numFiles, String description) {
-    LOG.info("Committing {} with {} files to table {}", description, numFiles, table);
+    log.info("Committing {} with {} files to table {}", description, numFiles, table);
     if (applicationId != null) {
       operation.set("spark.app.id", applicationId);
     }
@@ -171,7 +171,7 @@ class Writer implements DataSourceWriter {
     long start = System.currentTimeMillis();
     operation.commit(); // abort is automatically called if this fails
     long duration = System.currentTimeMillis() - start;
-    LOG.info("Committed in {} ms", duration);
+    log.info("Committed in {} ms", duration);
   }
 
   private void append(WriterCommitMessage[] messages) {

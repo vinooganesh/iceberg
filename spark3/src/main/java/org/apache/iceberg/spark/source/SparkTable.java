@@ -61,7 +61,7 @@ import static org.apache.iceberg.TableProperties.UPDATE_MODE_DEFAULT;
 public class SparkTable implements org.apache.spark.sql.connector.catalog.Table,
     SupportsRead, SupportsWrite, ExtendedSupportsDelete, SupportsMerge {
 
-  private static final Logger LOG = LoggerFactory.getLogger(SparkTable.class);
+  private static final Logger log = LoggerFactory.getLogger(SparkTable.class);
 
   private static final Set<String> RESERVED_PROPERTIES = Sets.newHashSet("provider", "format", "current-snapshot-id");
   private static final Set<TableCapability> CAPABILITIES = ImmutableSet.of(
@@ -227,7 +227,7 @@ public class SparkTable implements org.apache.spark.sql.connector.catalog.Table,
     Expression deleteExpr = SparkFilters.convert(filters);
 
     if (deleteExpr == Expressions.alwaysFalse()) {
-      LOG.info("Skipping the delete operation as the condition is always false");
+      log.info("Skipping the delete operation as the condition is always false");
       return;
     }
 

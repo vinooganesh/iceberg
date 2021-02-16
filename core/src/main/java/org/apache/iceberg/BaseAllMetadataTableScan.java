@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class BaseAllMetadataTableScan extends BaseTableScan {
-  private static final Logger LOG = LoggerFactory.getLogger(BaseAllMetadataTableScan.class);
+  private static final Logger log = LoggerFactory.getLogger(BaseAllMetadataTableScan.class);
 
   BaseAllMetadataTableScan(TableOperations ops, Table table, Schema fileSchema) {
     super(ops, table, fileSchema);
@@ -38,7 +38,7 @@ abstract class BaseAllMetadataTableScan extends BaseTableScan {
 
   @Override
   public CloseableIterable<FileScanTask> planFiles() {
-    LOG.info("Scanning metadata table {} with filter {}.", table(), filter());
+    log.info("Scanning metadata table {} with filter {}.", table(), filter());
     Listeners.notifyAll(new ScanEvent(table().name(), 0L, filter(), schema()));
 
     return planFiles(tableOps(), snapshot(), filter(), shouldIgnoreResiduals(), isCaseSensitive(), colStats());

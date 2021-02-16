@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseMetastoreTableOperations implements TableOperations {
-  private static final Logger LOG = LoggerFactory.getLogger(BaseMetastoreTableOperations.class);
+  private static final Logger log = LoggerFactory.getLogger(BaseMetastoreTableOperations.class);
 
   public static final String TABLE_TYPE_PROP = "table_type";
   public static final String ICEBERG_TABLE_TYPE_VALUE = "iceberg";
@@ -86,7 +86,7 @@ public abstract class BaseMetastoreTableOperations implements TableOperations {
       doRefresh();
     } catch (NoSuchTableException e) {
       if (currentMetadataWasAvailable) {
-        LOG.warn("Could not find the table during refresh, setting current metadata to null", e);
+        log.warn("Could not find the table during refresh, setting current metadata to null", e);
         shouldRefresh = true;
       }
 
@@ -110,7 +110,7 @@ public abstract class BaseMetastoreTableOperations implements TableOperations {
     }
     // if the metadata is not changed, return early
     if (base == metadata) {
-      LOG.info("Nothing to commit.");
+      log.info("Nothing to commit.");
       return;
     }
 
@@ -119,7 +119,7 @@ public abstract class BaseMetastoreTableOperations implements TableOperations {
     deleteRemovedMetadataFiles(base, metadata);
     requestRefresh();
 
-    LOG.info("Successfully committed to table {} in {} ms",
+    log.info("Successfully committed to table {} in {} ms",
         tableName(),
         System.currentTimeMillis() - start);
   }
@@ -156,7 +156,7 @@ public abstract class BaseMetastoreTableOperations implements TableOperations {
                                              int numRetries) {
     // use null-safe equality check because new tables have a null metadata location
     if (!Objects.equal(currentMetadataLocation, newLocation)) {
-      LOG.info("Refreshing table metadata from new version: {}", newLocation);
+      log.info("Refreshing table metadata from new version: {}", newLocation);
 
       AtomicReference<TableMetadata> newMetadata = new AtomicReference<>();
       Tasks.foreach(newLocation)
@@ -258,7 +258,7 @@ public abstract class BaseMetastoreTableOperations implements TableOperations {
     try {
       return Integer.valueOf(metadataLocation.substring(versionStart, versionEnd));
     } catch (NumberFormatException e) {
-      LOG.warn("Unable to parse version from metadata location: {}", metadataLocation, e);
+      log.warn("Unable to parse version from metadata location: {}", metadataLocation, e);
       return -1;
     }
   }
@@ -285,7 +285,7 @@ public abstract class BaseMetastoreTableOperations implements TableOperations {
       Tasks.foreach(removedPreviousMetadataFiles)
           .noRetry().suppressFailureWhenFinished()
           .onFailure((previousMetadataFile, exc) ->
-              LOG.warn("Delete failed for previous metadata file: {}", previousMetadataFile, exc))
+              log.warn("Delete failed for previous metadata file: {}", previousMetadataFile, exc))
           .run(previousMetadataFile -> io().deleteFile(previousMetadataFile.file()));
     }
   }

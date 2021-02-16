@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HiveIcebergMetaHook implements HiveMetaHook {
-  private static final Logger LOG = LoggerFactory.getLogger(HiveIcebergMetaHook.class);
+  private static final Logger log = LoggerFactory.getLogger(HiveIcebergMetaHook.class);
   private static final Set<String> PARAMETERS_TO_REMOVE = ImmutableSet
       .of(InputFormatConfig.TABLE_SCHEMA, Catalogs.LOCATION, Catalogs.NAME);
   private static final Set<String> PROPERTIES_TO_REMOVE = ImmutableSet
@@ -94,7 +94,7 @@ public class HiveIcebergMetaHook implements HiveMetaHook {
         Preconditions.checkArgument(catalogProperties.getProperty(InputFormatConfig.PARTITION_SPEC) == null,
             "Iceberg table already created - can not use provided partition specification");
 
-        LOG.info("Iceberg table already exists {}", icebergTable);
+        log.info("Iceberg table already exists {}", icebergTable);
 
         return;
       } catch (NoSuchTableException nte) {
@@ -173,7 +173,7 @@ public class HiveIcebergMetaHook implements HiveMetaHook {
     if (deleteData && deleteIcebergTable) {
       try {
         if (!Catalogs.hiveCatalog(conf)) {
-          LOG.info("Dropping with purge all the data for table {}.{}", hmsTable.getDbName(), hmsTable.getTableName());
+          log.info("Dropping with purge all the data for table {}.{}", hmsTable.getDbName(), hmsTable.getTableName());
           Catalogs.dropTable(conf, catalogProperties);
         } else {
           // do nothing if metadata folder has been deleted already (Hive 4 behaviour for purge=TRUE)
@@ -184,7 +184,7 @@ public class HiveIcebergMetaHook implements HiveMetaHook {
       } catch (Exception e) {
         // we want to successfully complete the Hive DROP TABLE command despite catalog-related exceptions here
         // e.g. we wish to successfully delete a Hive table even if the underlying Hadoop table has already been deleted
-        LOG.warn("Exception during commitDropTable operation for table {}.{}.",
+        log.warn("Exception during commitDropTable operation for table {}.{}.",
             hmsTable.getDbName(), hmsTable.getTableName(), e);
       }
     }

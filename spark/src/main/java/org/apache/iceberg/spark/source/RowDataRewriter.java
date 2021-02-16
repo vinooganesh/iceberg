@@ -53,7 +53,7 @@ import static org.apache.iceberg.TableProperties.DEFAULT_NAME_MAPPING;
 
 public class RowDataRewriter implements Serializable {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RowDataRewriter.class);
+  private static final Logger log = LoggerFactory.getLogger(RowDataRewriter.class);
 
   private final Schema schema;
   private final PartitionSpec spec;
@@ -133,22 +133,22 @@ public class RowDataRewriter implements Serializable {
 
     } catch (Throwable originalThrowable) {
       try {
-        LOG.error("Aborting task", originalThrowable);
+        log.error("Aborting task", originalThrowable);
         context.markTaskFailed(originalThrowable);
 
-        LOG.error("Aborting commit for partition {} (task {}, attempt {}, stage {}.{})",
+        log.error("Aborting commit for partition {} (task {}, attempt {}, stage {}.{})",
             partitionId, taskId, context.attemptNumber(), context.stageId(), context.stageAttemptNumber());
         if (dataReader != null) {
           dataReader.close();
         }
         writer.abort();
-        LOG.error("Aborted commit for partition {} (task {}, attempt {}, stage {}.{})",
+        log.error("Aborted commit for partition {} (task {}, attempt {}, stage {}.{})",
             partitionId, taskId, context.taskAttemptId(), context.stageId(), context.stageAttemptNumber());
 
       } catch (Throwable inner) {
         if (originalThrowable != inner) {
           originalThrowable.addSuppressed(inner);
-          LOG.warn("Suppressing exception in catch: {}", inner.getMessage(), inner);
+          log.warn("Suppressing exception in catch: {}", inner.getMessage(), inner);
         }
       }
 

@@ -47,7 +47,7 @@ import scala.collection.JavaConverters;
  * table.
  */
 public class Spark3MigrateAction extends Spark3CreateAction {
-  private static final Logger LOG = LoggerFactory.getLogger(Spark3MigrateAction.class);
+  private static final Logger log = LoggerFactory.getLogger(Spark3MigrateAction.class);
   private static final String BACKUP_SUFFIX = "_BACKUP_";
 
   public Spark3MigrateAction(SparkSession spark, CatalogPlugin sourceCatalog, Identifier sourceTableName) {
@@ -80,7 +80,7 @@ public class Spark3MigrateAction extends Spark3CreateAction {
 
       String stagingLocation = getMetadataLocation(icebergTable);
 
-      LOG.info("Beginning migration of {} using metadata location {}", sourceTableIdent(), stagingLocation);
+      log.info("Beginning migration of {} using metadata location {}", sourceTableIdent(), stagingLocation);
       Some<String> backupNamespace = Some.apply(backupIdentifier.namespace()[0]);
       TableIdentifier v1BackupIdentifier = new TableIdentifier(backupIdentifier.name(), backupNamespace);
       SparkTableUtil.importSparkTable(spark(), v1BackupIdentifier, icebergTable, stagingLocation);
@@ -89,28 +89,28 @@ public class Spark3MigrateAction extends Spark3CreateAction {
       threw = false;
     } finally {
       if (threw) {
-        LOG.error("Error when attempting perform migration changes, aborting table creation and restoring backup.");
+        log.error("Error when attempting perform migration changes, aborting table creation and restoring backup.");
 
         try {
           destCatalog().renameTable(backupIdentifier, sourceTableIdent());
         } catch (org.apache.spark.sql.catalyst.analysis.NoSuchTableException nstException) {
-          LOG.error("Cannot restore backup '{}', the backup cannot be found", backupIdentifier, nstException);
+          log.error("Cannot restore backup '{}', the backup cannot be found", backupIdentifier, nstException);
         } catch (org.apache.spark.sql.catalyst.analysis.TableAlreadyExistsException taeException) {
-          LOG.error("Cannot restore backup, a table with the original name " +
+          log.error("Cannot restore backup, a table with the original name " +
               "exists. The backup can be found with the name '{}'", backupIdentifier, taeException);
         }
 
         try {
           stagedTable.abortStagedChanges();
         } catch (Exception abortException) {
-          LOG.error("Cannot abort staged changes", abortException);
+          log.error("Cannot abort staged changes", abortException);
         }
       }
     }
 
     Snapshot snapshot = icebergTable.currentSnapshot();
     long numMigratedFiles = Long.parseLong(snapshot.summary().get(SnapshotSummary.TOTAL_DATA_FILES_PROP));
-    LOG.info("Successfully loaded Iceberg metadata for {} files", numMigratedFiles);
+    log.info("Successfully loaded Iceberg metadata for {} files", numMigratedFiles);
     return numMigratedFiles;
   }
 

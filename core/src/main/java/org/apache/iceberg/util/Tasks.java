@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Tasks {
-  private static final Logger LOG = LoggerFactory.getLogger(Tasks.class);
+  private static final Logger log = LoggerFactory.getLogger(Tasks.class);
 
   private Tasks() {
   }
@@ -240,7 +240,7 @@ public class Tasks {
                 revertTask.run(item);
               } catch (Exception e) {
                 failed = true;
-                LOG.error("Failed to revert task", e);
+                log.error("Failed to revert task", e);
                 // keep going
               }
               if (stopRevertsOnFailure && failed) {
@@ -256,7 +256,7 @@ public class Tasks {
                 abortTask.run(iterator.next());
               } catch (Exception e) {
                 failed = true;
-                LOG.error("Failed to abort task", e);
+                log.error("Failed to abort task", e);
                 // keep going
               }
               if (stopAbortsOnFailure && failed) {
@@ -282,7 +282,7 @@ public class Tasks {
         onFailure.run(item, failure);
       } catch (Exception failException) {
         failure.addSuppressed(failException);
-        LOG.error("Failed to clean up on failure", failException);
+        log.error("Failed to clean up on failure", failException);
         // keep going
       }
     }
@@ -337,7 +337,7 @@ public class Tasks {
                 abortTask.run(item);
                 failed = false;
               } catch (Exception e) {
-                LOG.error("Failed to abort task", e);
+                log.error("Failed to abort task", e);
                 // swallow the exception
               } finally {
                 if (failed) {
@@ -368,7 +368,7 @@ public class Tasks {
                 revertTask.run(item);
                 failed = false;
               } catch (Exception e) {
-                LOG.error("Failed to revert task", e);
+                log.error("Failed to revert task", e);
                 // swallow the exception
               } finally {
                 if (failed) {
@@ -408,7 +408,7 @@ public class Tasks {
           long durationMs = System.currentTimeMillis() - start;
           if (attempt >= maxAttempts || (durationMs > maxDurationMs && attempt > 1)) {
             if (durationMs > maxDurationMs) {
-              LOG.info("Stopping retries after {} ms", durationMs);
+              log.info("Stopping retries after {} ms", durationMs);
             }
             throw e;
           }
@@ -446,7 +446,7 @@ public class Tasks {
           int jitter = ThreadLocalRandom.current()
               .nextInt(Math.max(1, (int) (delayMs * 0.1)));
 
-          LOG.warn("Retrying task after failure: {}", e.getMessage(), e);
+          log.warn("Retrying task after failure: {}", e.getMessage(), e);
 
           try {
             TimeUnit.MILLISECONDS.sleep(delayMs + jitter);
@@ -477,7 +477,7 @@ public class Tasks {
             future.get();
 
           } catch (InterruptedException e) {
-            LOG.warn("Interrupted while getting future results", e);
+            log.warn("Interrupted while getting future results", e);
             for (Throwable t : uncaught) {
               e.addSuppressed(t);
             }
@@ -500,7 +500,7 @@ public class Tasks {
               uncaught.add(e);
             }
 
-            LOG.warn("Task threw uncaught exception", cause);
+            log.warn("Task threw uncaught exception", cause);
           }
         }
 
@@ -510,7 +510,7 @@ public class Tasks {
         try {
           Thread.sleep(10);
         } catch (InterruptedException e) {
-          LOG.warn("Interrupted while waiting for tasks to finish", e);
+          log.warn("Interrupted while waiting for tasks to finish", e);
 
           for (Future<?> future : futures) {
             future.cancel(true);

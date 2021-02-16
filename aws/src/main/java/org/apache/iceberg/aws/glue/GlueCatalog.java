@@ -70,7 +70,7 @@ import software.amazon.awssdk.services.glue.model.UpdateDatabaseRequest;
 
 public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, SupportsNamespaces, Configurable {
 
-  private static final Logger LOG = LoggerFactory.getLogger(GlueCatalog.class);
+  private static final Logger log = LoggerFactory.getLogger(GlueCatalog.class);
 
   private GlueClient glue;
   private Configuration hadoopConf;
@@ -181,7 +181,7 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
       }
     } while (nextToken != null);
 
-    LOG.debug("Listing of namespace: {} resulted in the following tables: {}", namespace, results);
+    log.debug("Listing of namespace: {} resulted in the following tables: {}", namespace, results);
     return results;
   }
 
@@ -195,18 +195,18 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
           .databaseName(IcebergToGlueConverter.getDatabaseName(identifier))
           .name(identifier.name())
           .build());
-      LOG.info("Successfully dropped table {} from Glue", identifier);
+      log.info("Successfully dropped table {} from Glue", identifier);
       if (purge && lastMetadata != null) {
         CatalogUtil.dropTableData(ops.io(), lastMetadata);
-        LOG.info("Glue table {} data purged", identifier);
+        log.info("Glue table {} data purged", identifier);
       }
-      LOG.info("Dropped table: {}", identifier);
+      log.info("Dropped table: {}", identifier);
       return true;
     } catch (EntityNotFoundException e) {
-      LOG.error("Cannot drop table {} because table not found or not accessible", identifier, e);
+      log.error("Cannot drop table {} because table not found or not accessible", identifier, e);
       return false;
     } catch (Exception e) {
-      LOG.error("Cannot complete drop table operation for {} due to unexpected exception", identifier, e);
+      log.error("Cannot complete drop table operation for {} due to unexpected exception", identifier, e);
       throw e;
     }
   }
@@ -251,13 +251,13 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
         .databaseName(toTableDbName)
         .tableInput(tableInputBuilder.name(toTableName).build())
         .build());
-    LOG.info("created rename destination table {}", to);
+    log.info("created rename destination table {}", to);
 
     try {
       dropTable(from, false);
     } catch (Exception e) {
       // rollback, delete renamed table
-      LOG.error("Fail to drop old table {} after renaming to {}, rollback to use the old table", from, to, e);
+      log.error("Fail to drop old table {} after renaming to {}, rollback to use the old table", from, to, e);
       glue.deleteTable(DeleteTableRequest.builder()
           .catalogId(awsProperties.glueCatalogId())
           .databaseName(toTableDbName)
@@ -266,7 +266,7 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
       throw e;
     }
 
-    LOG.info("Successfully renamed table from {} to {}", from, to);
+    log.info("Successfully renamed table from {} to {}", from, to);
   }
 
   @Override
@@ -276,7 +276,7 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
           .catalogId(awsProperties.glueCatalogId())
           .databaseInput(IcebergToGlueConverter.toDatabaseInput(namespace, metadata))
           .build());
-      LOG.info("Created namespace: {}", namespace);
+      log.info("Created namespace: {}", namespace);
     } catch (software.amazon.awssdk.services.glue.model.AlreadyExistsException e) {
       throw new AlreadyExistsException("Cannot create namespace %s because it already exists in Glue", namespace);
     }
@@ -309,7 +309,7 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
       }
     } while (nextToken != null);
 
-    LOG.debug("Listing namespace {} returned namespaces: {}", namespace, results);
+    log.debug("Listing namespace {} returned namespaces: {}", namespace, results);
     return results;
   }
 
@@ -322,7 +322,7 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
           .name(databaseName)
           .build());
       Map<String, String> result = response.database().parameters();
-      LOG.debug("Loaded metadata for namespace {} found {}", namespace, result);
+      log.debug("Loaded metadata for namespace {} found {}", namespace, result);
       return result;
     } catch (InvalidInputException e) {
       throw new NoSuchNamespaceException("invalid input for namespace %s, error message: %s",
@@ -346,7 +346,7 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
         .catalogId(awsProperties.glueCatalogId())
         .name(IcebergToGlueConverter.toDatabaseName(namespace))
         .build());
-    LOG.info("Dropped namespace: {}", namespace);
+    log.info("Dropped namespace: {}", namespace);
     // Always successful, otherwise exception is thrown
     return true;
   }
@@ -361,7 +361,7 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
         .name(IcebergToGlueConverter.toDatabaseName(namespace))
         .databaseInput(IcebergToGlueConverter.toDatabaseInput(namespace, newProperties))
         .build());
-    LOG.debug("Successfully set properties {} for {}", properties.keySet(), namespace);
+    log.debug("Successfully set properties {} for {}", properties.keySet(), namespace);
     // Always successful, otherwise exception is thrown
     return true;
   }
@@ -378,7 +378,7 @@ public class GlueCatalog extends BaseMetastoreCatalog implements Closeable, Supp
         .name(IcebergToGlueConverter.toDatabaseName(namespace))
         .databaseInput(IcebergToGlueConverter.toDatabaseInput(namespace, metadata))
         .build());
-    LOG.debug("Successfully removed properties {} from {}", properties, namespace);
+    log.debug("Successfully removed properties {} from {}", properties, namespace);
     // Always successful, otherwise exception is thrown
     return true;
   }

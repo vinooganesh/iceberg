@@ -59,7 +59,7 @@ import static org.apache.iceberg.TableProperties.GC_ENABLED_DEFAULT;
  */
 @SuppressWarnings("UnnecessaryAnonymousClass")
 public class ExpireSnapshotsAction extends BaseSparkAction<ExpireSnapshotsActionResult> {
-  private static final Logger LOG = LoggerFactory.getLogger(ExpireSnapshotsAction.class);
+  private static final Logger log = LoggerFactory.getLogger(ExpireSnapshotsAction.class);
 
   private static final String DATA_FILE = "Data File";
   private static final String MANIFEST = "Manifest";
@@ -242,7 +242,7 @@ public class ExpireSnapshotsAction extends BaseSparkAction<ExpireSnapshotsAction
         .retry(3).stopRetryOn(NotFoundException.class).suppressFailureWhenFinished()
         .executeWith(deleteExecutorService)
         .onFailure((fileInfo, exc) ->
-            LOG.warn("Delete failed for {}: {}", fileInfo.getString(1), fileInfo.getString(0), exc))
+            log.warn("Delete failed for {}: {}", fileInfo.getString(1), fileInfo.getString(0), exc))
         .run(fileInfo -> {
           String file = fileInfo.getString(0);
           String type = fileInfo.getString(1);
@@ -250,19 +250,19 @@ public class ExpireSnapshotsAction extends BaseSparkAction<ExpireSnapshotsAction
           switch (type) {
             case DATA_FILE:
               dataFileCount.incrementAndGet();
-              LOG.trace("Deleted Data File: {}", file);
+              log.trace("Deleted Data File: {}", file);
               break;
             case MANIFEST:
               manifestCount.incrementAndGet();
-              LOG.debug("Deleted Manifest: {}", file);
+              log.debug("Deleted Manifest: {}", file);
               break;
             case MANIFEST_LIST:
               manifestListCount.incrementAndGet();
-              LOG.debug("Deleted Manifest List: {}", file);
+              log.debug("Deleted Manifest List: {}", file);
               break;
           }
         });
-    LOG.info("Deleted {} total files", dataFileCount.get() + manifestCount.get() + manifestListCount.get());
+    log.info("Deleted {} total files", dataFileCount.get() + manifestCount.get() + manifestListCount.get());
     return new ExpireSnapshotsActionResult(dataFileCount.get(), manifestCount.get(), manifestListCount.get());
   }
 }

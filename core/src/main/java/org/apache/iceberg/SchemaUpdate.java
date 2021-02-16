@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * Schema evolution API implementation.
  */
 class SchemaUpdate implements UpdateSchema {
-  private static final Logger LOG = LoggerFactory.getLogger(SchemaUpdate.class);
+  private static final Logger log = LoggerFactory.getLogger(SchemaUpdate.class);
   private static final int TABLE_ROOT_ID = -1;
 
   private final TableOperations ops;
@@ -398,7 +398,7 @@ class SchemaUpdate implements UpdateSchema {
 
       } catch (RuntimeException e) {
         // log the error, but do not fail the update
-        LOG.warn("Failed to update external schema mapping: {}", mappingJson, e);
+        log.warn("Failed to update external schema mapping: {}", mappingJson, e);
       }
     }
 

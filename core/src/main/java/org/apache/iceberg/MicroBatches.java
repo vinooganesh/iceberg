@@ -86,7 +86,7 @@ public class MicroBatches {
   }
 
   public static class MicroBatchBuilder {
-    private static final Logger LOG = LoggerFactory.getLogger(MicroBatchBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(MicroBatchBuilder.class);
 
     private final Snapshot snapshot;
     private final FileIO io;
@@ -217,7 +217,7 @@ public class MicroBatches {
             isLastIndex = true;
           }
         } catch (IOException ioe) {
-          LOG.warn("Failed to close task iterable", ioe);
+          log.warn("Failed to close task iterable", ioe);
         }
 
         if (currentSizeInBytes >= targetSizeInBytes) {

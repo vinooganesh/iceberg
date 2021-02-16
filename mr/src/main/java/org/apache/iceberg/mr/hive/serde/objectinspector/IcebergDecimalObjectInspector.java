@@ -22,6 +22,7 @@ package org.apache.iceberg.mr.hive.serde.objectinspector;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
@@ -34,7 +35,7 @@ public final class IcebergDecimalObjectInspector extends AbstractPrimitiveJavaOb
     implements HiveDecimalObjectInspector, WriteObjectInspector {
 
   private static final Cache<Integer, IcebergDecimalObjectInspector> CACHE = Caffeine.newBuilder()
-          .expireAfterAccess(10, TimeUnit.MINUTES)
+          .expireAfterAccess(Duration.ofMinutes(10))
           .build();
 
   public static IcebergDecimalObjectInspector get(int precision, int scale) {

@@ -129,7 +129,7 @@ public class MetricsModes {
 
     @Override
     public int hashCode() {
-      return Objects.hash(length);
+      return Objects.hashCode(length);
     }
   }
 

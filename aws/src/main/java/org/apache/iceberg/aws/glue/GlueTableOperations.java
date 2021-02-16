@@ -46,7 +46,7 @@ import software.amazon.awssdk.services.glue.model.UpdateTableRequest;
 
 class GlueTableOperations extends BaseMetastoreTableOperations {
 
-  private static final Logger LOG = LoggerFactory.getLogger(GlueTableOperations.class);
+  private static final Logger log = LoggerFactory.getLogger(GlueTableOperations.class);
 
   // same as org.apache.hadoop.hive.metastore.TableType.EXTERNAL_TABLE
   // more details: https://docs.aws.amazon.com/glue/latest/webapi/API_TableInput.html
@@ -166,7 +166,7 @@ class GlueTableOperations extends BaseMetastoreTableOperations {
 
   private void persistGlueTable(Table glueTable, Map<String, String> parameters) {
     if (glueTable != null) {
-      LOG.debug("Committing existing Glue table: {}", tableName());
+      log.debug("Committing existing Glue table: {}", tableName());
       glue.updateTable(UpdateTableRequest.builder()
           .catalogId(awsProperties.glueCatalogId())
           .databaseName(databaseName)
@@ -178,7 +178,7 @@ class GlueTableOperations extends BaseMetastoreTableOperations {
               .build())
           .build());
     } else {
-      LOG.debug("Committing new Glue table: {}", tableName());
+      log.debug("Committing new Glue table: {}", tableName());
       glue.createTable(CreateTableRequest.builder()
           .catalogId(awsProperties.glueCatalogId())
           .databaseName(databaseName)
@@ -198,7 +198,7 @@ class GlueTableOperations extends BaseMetastoreTableOperations {
         io().deleteFile(metadataLocation);
       }
     } catch (RuntimeException e) {
-      LOG.error("Fail to cleanup metadata file at {}", metadataLocation, e);
+      log.error("Fail to cleanup metadata file at {}", metadataLocation, e);
       throw e;
     } finally {
       lockManager.release(commitLockEntityId, metadataLocation);

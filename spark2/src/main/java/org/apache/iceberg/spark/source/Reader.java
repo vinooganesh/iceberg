@@ -75,7 +75,7 @@ import static org.apache.iceberg.TableProperties.DEFAULT_NAME_MAPPING;
 
 class Reader implements DataSourceReader, SupportsScanColumnarBatch, SupportsPushDownFilters,
     SupportsPushDownRequiredColumns, SupportsReportStatistics {
-  private static final Logger LOG = LoggerFactory.getLogger(Reader.class);
+  private static final Logger log = LoggerFactory.getLogger(Reader.class);
 
   private static final Filter[] NO_FILTERS = new Filter[0];
   private static final ImmutableSet<String> LOCALITY_WHITELIST_FS = ImmutableSet.of("hdfs");
@@ -144,7 +144,7 @@ class Reader implements DataSourceReader, SupportsScanColumnarBatch, SupportsPus
         FileSystem fs = new Path(table.location()).getFileSystem(conf);
         fsscheme = fs.getScheme().toLowerCase(Locale.ENGLISH);
       } catch (IOException ioe) {
-        LOG.warn("Failed to get Hadoop Filesystem", ioe);
+        log.warn("Failed to get Hadoop Filesystem", ioe);
       }
       String scheme = fsscheme; // Makes an effectively final version of scheme
       this.localityPreferred = options.get("locality").map(Boolean::parseBoolean)
@@ -223,7 +223,7 @@ class Reader implements DataSourceReader, SupportsScanColumnarBatch, SupportsPus
           task, tableSchemaString, expectedSchemaString, nameMappingString, io, encryptionManager, caseSensitive,
           localityPreferred, new BatchReaderFactory(batchSize)));
     }
-    LOG.info("Batching input partitions with {} tasks.", readTasks.size());
+    log.info("Batching input partitions with {} tasks.", readTasks.size());
 
     return readTasks;
   }

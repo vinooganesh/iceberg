@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
 class S3InputStream extends SeekableInputStream {
-  private static final Logger LOG = LoggerFactory.getLogger(S3InputStream.class);
+  private static final Logger log = LoggerFactory.getLogger(S3InputStream.class);
 
   private final StackTraceElement[] createStack;
   private final S3Client s3;
@@ -115,7 +115,7 @@ class S3InputStream extends SeekableInputStream {
       long skip = next - pos;
       if (skip <= Math.max(stream.available(), skipSize)) {
         // already buffered or seek is small enough
-        LOG.debug("Read-through seek for {} to offset {}", location, next);
+        log.debug("Read-through seek for {} to offset {}", location, next);
         try {
           ByteStreams.skipFully(stream, skip);
           pos = next;
@@ -127,7 +127,7 @@ class S3InputStream extends SeekableInputStream {
     }
 
     // close the stream and open at desired position
-    LOG.debug("Seek with new stream for {} to offset {}", location, next);
+    log.debug("Seek with new stream for {} to offset {}", location, next);
     pos = next;
     openStream();
   }
@@ -162,7 +162,7 @@ class S3InputStream extends SeekableInputStream {
       close(); // releasing resources is more important than printing the warning
       String trace = Joiner.on("\n\t").join(
           Arrays.copyOfRange(createStack, 1, createStack.length));
-      LOG.warn("Unclosed input stream created by:\n\t{}", trace);
+      log.warn("Unclosed input stream created by:\n\t{}", trace);
     }
   }
 }

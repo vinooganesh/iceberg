@@ -58,7 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IcebergPigInputFormat<T> extends InputFormat<Void, T> {
-  private static final Logger LOG = LoggerFactory.getLogger(IcebergPigInputFormat.class);
+  private static final Logger log = LoggerFactory.getLogger(IcebergPigInputFormat.class);
 
   static final String ICEBERG_SCHEMA = "iceberg.schema";
   static final String ICEBERG_PROJECTED_FIELDS = "iceberg.projected.fields";
@@ -77,7 +77,7 @@ public class IcebergPigInputFormat<T> extends InputFormat<Void, T> {
   @SuppressWarnings("unchecked")
   public List<InputSplit> getSplits(JobContext context) throws IOException {
     if (splits != null) {
-      LOG.info("Returning cached splits: {}", splits.size());
+      log.info("Returning cached splits: {}", splits.size());
       return splits;
     }
 
@@ -88,10 +88,10 @@ public class IcebergPigInputFormat<T> extends InputFormat<Void, T> {
     // Apply Filters
     Expression filterExpression =
         (Expression) ObjectSerializer.deserialize(context.getConfiguration().get(scope(ICEBERG_FILTER_EXPRESSION)));
-    LOG.info("[{}]: iceberg filter expressions: {}", signature, filterExpression);
+    log.info("[{}]: iceberg filter expressions: {}", signature, filterExpression);
 
     if (filterExpression != null) {
-      LOG.info("Filter Expression: {}", filterExpression);
+      log.info("Filter Expression: {}", filterExpression);
       scan = scan.filter(filterExpression);
     }
 
@@ -179,11 +179,11 @@ public class IcebergPigInputFormat<T> extends InputFormat<Void, T> {
       FileScanTask currentTask = tasks.next();
 
       Schema tableSchema = (Schema) ObjectSerializer.deserialize(context.getConfiguration().get(scope(ICEBERG_SCHEMA)));
-      LOG.debug("[{}]: Task table schema: {}", signature, tableSchema);
+      log.debug("[{}]: Task table schema: {}", signature, tableSchema);
 
       List<String> projectedFields =
           (List<String>) ObjectSerializer.deserialize(context.getConfiguration().get(scope(ICEBERG_PROJECTED_FIELDS)));
-      LOG.debug("[{}]: Task projected fields: {}", signature, projectedFields);
+      log.debug("[{}]: Task projected fields: {}", signature, projectedFields);
 
       Schema projectedSchema = projectedFields != null ? SchemaUtil.project(tableSchema, projectedFields) : tableSchema;
 

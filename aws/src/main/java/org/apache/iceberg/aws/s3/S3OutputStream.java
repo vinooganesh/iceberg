@@ -64,7 +64,7 @@ import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartResponse;
 
 class S3OutputStream extends PositionOutputStream {
-  private static final Logger LOG = LoggerFactory.getLogger(S3OutputStream.class);
+  private static final Logger log = LoggerFactory.getLogger(S3OutputStream.class);
 
   private static volatile ExecutorService executorService;
 
@@ -242,11 +242,11 @@ class S3OutputStream extends PositionOutputStream {
             try {
               Files.deleteIfExists(f.toPath());
             } catch (IOException e) {
-              LOG.warn("Failed to delete staging file: {}", f, e);
+              log.warn("Failed to delete staging file: {}", f, e);
             }
 
             if (thrown != null) {
-              LOG.error("Failed to upload part: {}", uploadRequest, thrown);
+              log.error("Failed to upload part: {}", uploadRequest, thrown);
               abortUpload();
             }
           });
@@ -273,7 +273,7 @@ class S3OutputStream extends PositionOutputStream {
     Tasks.foreach(request)
         .noRetry()
         .onFailure((r, thrown) -> {
-          LOG.error("Failed to complete multipart upload request: {}", r, thrown);
+          log.error("Failed to complete multipart upload request: {}", r, thrown);
           abortUpload();
         })
         .throwFailureWhenFinished()
@@ -294,7 +294,7 @@ class S3OutputStream extends PositionOutputStream {
   private void cleanUpStagingFiles() {
     Tasks.foreach(stagingFiles)
         .suppressFailureWhenFinished()
-        .onFailure((file, thrown) -> LOG.warn("Failed to delete staging file: {}", file, thrown))
+        .onFailure((file, thrown) -> log.warn("Failed to delete staging file: {}", file, thrown))
         .run(File::delete);
   }
 
@@ -336,7 +336,7 @@ class S3OutputStream extends PositionOutputStream {
       close(); // releasing resources is more important than printing the warning
       String trace = Joiner.on("\n\t").join(
           Arrays.copyOfRange(createStack, 1, createStack.length));
-      LOG.warn("Unclosed output stream created by:\n\t{}", trace);
+      log.warn("Unclosed output stream created by:\n\t{}", trace);
     }
   }
 }

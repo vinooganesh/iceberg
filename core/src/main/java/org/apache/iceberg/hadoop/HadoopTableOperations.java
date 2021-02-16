@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * This maintains metadata in a "metadata" folder under the table location.
  */
 public class HadoopTableOperations implements TableOperations {
-  private static final Logger LOG = LoggerFactory.getLogger(HadoopTableOperations.class);
+  private static final Logger log = LoggerFactory.getLogger(HadoopTableOperations.class);
   private static final Pattern VERSION_PATTERN = Pattern.compile("v([^\\.]*)\\..*");
 
   private final Configuration conf;
@@ -130,7 +130,7 @@ public class HadoopTableOperations implements TableOperations {
     }
 
     if (base == metadata) {
-      LOG.info("Nothing to commit.");
+      log.info("Nothing to commit.");
       return;
     }
 
@@ -298,7 +298,7 @@ public class HadoopTableOperations implements TableOperations {
       fs.delete(versionHintFile, false /* recursive delete */);
       fs.rename(tempVersionHintFile, versionHintFile);
     } catch (IOException e) {
-      LOG.warn("Failed to update version hint", e);
+      log.warn("Failed to update version hint", e);
     }
   }
 
@@ -320,9 +320,9 @@ public class HadoopTableOperations implements TableOperations {
     } catch (Exception e) {
       try {
         if (fs.exists(metadataRoot())) {
-          LOG.warn("Error reading version hint file {}", versionHintFile, e);
+          log.warn("Error reading version hint file {}", versionHintFile, e);
         } else {
-          LOG.debug("Metadata for table not found in directory {}", metadataRoot(), e);
+          log.debug("Metadata for table not found in directory {}", metadataRoot(), e);
           return 0;
         }
 
@@ -339,7 +339,7 @@ public class HadoopTableOperations implements TableOperations {
 
         return maxVersion;
       } catch (IOException io) {
-        LOG.warn("Error trying to recover version-hint.txt data for {}", versionHintFile, e);
+        log.warn("Error trying to recover version-hint.txt data for {}", versionHintFile, e);
         return 0;
       }
     }
@@ -416,7 +416,7 @@ public class HadoopTableOperations implements TableOperations {
       Tasks.foreach(removedPreviousMetadataFiles)
           .noRetry().suppressFailureWhenFinished()
           .onFailure((previousMetadataFile, exc) ->
-              LOG.warn("Delete failed for previous metadata file: {}", previousMetadataFile, exc))
+              log.warn("Delete failed for previous metadata file: {}", previousMetadataFile, exc))
           .run(previousMetadataFile -> io().deleteFile(previousMetadataFile.file()));
     }
   }

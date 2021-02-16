@@ -61,7 +61,7 @@ import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES;
 import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES_DEFAULT;
 
 public class FlinkSink {
-  private static final Logger LOG = LoggerFactory.getLogger(FlinkSink.class);
+  private static final Logger log = LoggerFactory.getLogger(FlinkSink.class);
 
   private static final String ICEBERG_STREAM_WRITER_NAME = IcebergStreamWriter.class.getSimpleName();
   private static final String ICEBERG_FILES_COMMITTER_NAME = IcebergFilesCommitter.class.getSimpleName();
@@ -284,7 +284,7 @@ public class FlinkSink {
           }
 
         case RANGE:
-          LOG.warn("Fallback to use 'none' distribution mode, because {}={} is not supported in flink now",
+          log.warn("Fallback to use 'none' distribution mode, because {}={} is not supported in flink now",
               WRITE_DISTRIBUTION_MODE, DistributionMode.RANGE.modeName());
           return input;
 

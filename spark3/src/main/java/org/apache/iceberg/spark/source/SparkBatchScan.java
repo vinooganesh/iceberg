@@ -57,7 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class SparkBatchScan implements Scan, Batch, SupportsReportStatistics {
-  private static final Logger LOG = LoggerFactory.getLogger(SparkBatchScan.class);
+  private static final Logger log = LoggerFactory.getLogger(SparkBatchScan.class);
 
   private final Table table;
   private final boolean caseSensitive;
@@ -171,7 +171,7 @@ abstract class SparkBatchScan implements Scan, Batch, SupportsReportStatistics {
 
     // estimate stats using snapshot summary only for partitioned tables (metadata tables are unpartitioned)
     if (!table.spec().isUnpartitioned() && filterExpressions.isEmpty()) {
-      LOG.debug("using table metadata to estimate table statistics");
+      log.debug("using table metadata to estimate table statistics");
       long totalRecords = PropertyUtil.propertyAsLong(table.currentSnapshot().summary(),
           SnapshotSummary.TOTAL_RECORDS_PROP, Long.MAX_VALUE);
       Schema projectedSchema = expectedSchema != null ? expectedSchema : table.schema();

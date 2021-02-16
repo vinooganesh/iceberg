@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HiveIcebergSerDe extends AbstractSerDe {
-  private static final Logger LOG = LoggerFactory.getLogger(HiveIcebergSerDe.class);
+  private static final Logger log = LoggerFactory.getLogger(HiveIcebergSerDe.class);
   private static final String LIST_COLUMN_COMMENT = "columns.comments";
 
   private ObjectInspector inspector;
@@ -80,7 +80,7 @@ public class HiveIcebergSerDe extends AbstractSerDe {
       try {
         // always prefer the original table schema if there is one
         this.tableSchema = Catalogs.loadTable(configuration, serDeProperties).schema();
-        LOG.info("Using schema from existing table {}", SchemaParser.toJson(tableSchema));
+        log.info("Using schema from existing table {}", SchemaParser.toJson(tableSchema));
       } catch (Exception e) {
         boolean autoConversion = configuration.getBoolean(InputFormatConfig.SCHEMA_AUTO_CONVERSION, false);
         // If we can not load the table try the provided hive schema
@@ -184,7 +184,7 @@ public class HiveIcebergSerDe extends AbstractSerDe {
       }
       Schema hiveSchema = HiveSchemaUtil.convert(names, TypeInfoUtils.getTypeInfosFromTypeString(columnTypes),
               comments, autoConversion);
-      LOG.info("Using hive schema {}", SchemaParser.toJson(hiveSchema));
+      log.info("Using hive schema {}", SchemaParser.toJson(hiveSchema));
       return hiveSchema;
     } else {
       throw new SerDeException("Please provide an existing table or a valid schema", previousException);

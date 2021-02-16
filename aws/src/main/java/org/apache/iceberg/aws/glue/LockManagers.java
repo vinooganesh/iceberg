@@ -146,7 +146,7 @@ class LockManagers {
    */
   static class InMemoryLockManager extends BaseLockManager {
 
-    private static final Logger LOG = LoggerFactory.getLogger(InMemoryLockManager.class);
+    private static final Logger log = LoggerFactory.getLogger(InMemoryLockManager.class);
 
     private static final Map<String, InMemoryLockContent> LOCKS = Maps.newConcurrentMap();
     private static final Map<String, ScheduledFuture<?>> HEARTBEATS = Maps.newHashMap();
@@ -214,12 +214,12 @@ class LockManagers {
     public boolean release(String entityId, String ownerId) {
       InMemoryLockContent currentContent = LOCKS.get(entityId);
       if (currentContent == null) {
-        LOG.error("Cannot find lock for entity {}", entityId);
+        log.error("Cannot find lock for entity {}", entityId);
         return false;
       }
 
       if (!currentContent.ownerId().equals(ownerId)) {
-        LOG.error("Cannot unlock {} by {}, current owner: {}", entityId, ownerId, currentContent.ownerId());
+        log.error("Cannot unlock {} by {}, current owner: {}", entityId, ownerId, currentContent.ownerId());
         return false;
       }
 

@@ -26,12 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PlaintextEncryptionManager implements EncryptionManager {
-  private static final Logger LOG = LoggerFactory.getLogger(PlaintextEncryptionManager.class);
+  private static final Logger log = LoggerFactory.getLogger(PlaintextEncryptionManager.class);
 
   @Override
   public InputFile decrypt(EncryptedInputFile encrypted) {
     if (encrypted.keyMetadata().buffer() != null) {
-      LOG.warn("File encryption key metadata is present, but currently using PlaintextEncryptionManager.");
+      log.warn("File encryption key metadata is present, but currently using PlaintextEncryptionManager.");
     }
     return encrypted.encryptedInputFile();
   }

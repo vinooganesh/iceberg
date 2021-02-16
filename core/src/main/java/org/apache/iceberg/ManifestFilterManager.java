@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class ManifestFilterManager<F extends ContentFile<F>> {
-  private static final Logger LOG = LoggerFactory.getLogger(ManifestFilterManager.class);
+  private static final Logger log = LoggerFactory.getLogger(ManifestFilterManager.class);
   private static final Joiner COMMA = Joiner.on(",");
 
   protected static class DeleteException extends ValidationException {
@@ -393,7 +393,7 @@ abstract class ManifestFilterManager<F extends ContentFile<F>> {
 
               CharSequenceWrapper wrapper = CharSequenceWrapper.wrap(entry.file().path());
               if (deletedPaths.contains(wrapper)) {
-                LOG.warn("Deleting a duplicate path from manifest {}: {}",
+                log.warn("Deleting a duplicate path from manifest {}: {}",
                     manifest.path(), wrapper.get());
                 duplicateDeleteCount += 1;
               } else {

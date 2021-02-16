@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * to store metadata and manifests.
  */
 public class HadoopTables implements Tables, Configurable {
-  private static final Logger LOG = LoggerFactory.getLogger(HadoopTables.class);
+  private static final Logger log = LoggerFactory.getLogger(HadoopTables.class);
   private static final String METADATA_JSON = "metadata.json";
   private Configuration conf;
 
@@ -90,7 +90,7 @@ public class HadoopTables implements Tables, Configurable {
       }
     }
 
-    LOG.info("Table location loaded: {}", result.location());
+    log.info("Table location loaded: {}", result.location());
     return result;
   }
 

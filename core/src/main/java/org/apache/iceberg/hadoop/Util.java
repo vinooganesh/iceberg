@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Util {
-  private static final Logger LOG = LoggerFactory.getLogger(Util.class);
+  private static final Logger log = LoggerFactory.getLogger(Util.class);
 
   private Util() {
   }
@@ -61,7 +61,7 @@ public class Util {
           locationSets.addAll(Arrays.asList(b.getHosts()));
         }
       } catch (IOException ioe) {
-        LOG.warn("Failed to get block locations for path {}", path, ioe);
+        log.warn("Failed to get block locations for path {}", path, ioe);
       }
     }
 

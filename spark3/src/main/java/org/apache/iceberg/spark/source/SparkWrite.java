@@ -85,7 +85,7 @@ import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES;
 import static org.apache.iceberg.TableProperties.WRITE_TARGET_FILE_SIZE_BYTES_DEFAULT;
 
 class SparkWrite {
-  private static final Logger LOG = LoggerFactory.getLogger(SparkWrite.class);
+  private static final Logger log = LoggerFactory.getLogger(SparkWrite.class);
 
   private final Table table;
   private final String queryId;
@@ -174,7 +174,7 @@ class SparkWrite {
   }
 
   private void commitOperation(SnapshotUpdate<?> operation, String description) {
-    LOG.info("Committing {} to table {}", description, table);
+    log.info("Committing {} to table {}", description, table);
     if (applicationId != null) {
       operation.set("spark.app.id", applicationId);
     }
@@ -193,7 +193,7 @@ class SparkWrite {
     long start = System.currentTimeMillis();
     operation.commit(); // abort is automatically called if this fails
     long duration = System.currentTimeMillis() - start;
-    LOG.info("Committed in {} ms", duration);
+    log.info("Committed in {} ms", duration);
   }
 
   private void abort(WriterCommitMessage[] messages) {
@@ -381,13 +381,13 @@ class SparkWrite {
 
     @Override
     public final void commit(long epochId, WriterCommitMessage[] messages) {
-      LOG.info("Committing epoch {} for query {} in {} mode", epochId, queryId, mode());
+      log.info("Committing epoch {} for query {} in {} mode", epochId, queryId, mode());
 
       table.refresh();
 
       Long lastCommittedEpochId = findLastCommittedEpochId();
       if (lastCommittedEpochId != null && epochId <= lastCommittedEpochId) {
-        LOG.info("Skipping epoch {} for query {} as it was already committed", epochId, queryId);
+        log.info("Skipping epoch {} for query {} as it was already committed", epochId, queryId);
         return;
       }
 
